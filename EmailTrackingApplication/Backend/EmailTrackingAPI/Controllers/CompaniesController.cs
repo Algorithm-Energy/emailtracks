@@ -119,43 +119,35 @@ namespace EmailTrackingAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<ApiResponse<string>>> UpdateCompany(int id, [FromBody] UpdateCompanyRequest request)
         {
-            var userId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
-            var isDirector = bool.Parse(User.FindFirst("IsDirector")?.Value ?? "false");
-
-            if (userId == 0)
+            if (!Request.Headers.TryGetValue("userId", out var userIdHeader) ||
+                !int.TryParse(userIdHeader.FirstOrDefault(), out int userId) || userId == 0)
                 return Unauthorized(new ApiResponse<string> { Success = false, Message = "User not authenticated - Failed to update company" });
+
+            bool.TryParse(Request.Headers["isDirector"].FirstOrDefault(), out bool isDirector);
 
             var success = await _companyService.UpdateCompany(id, request, userId, isDirector);
             if (!success)
                 return BadRequest(new ApiResponse<string> { Success = false, Message = "Failed to update company" });
 
-            return Ok(new ApiResponse<string>
-            {
-                Success = true,
-                Message = "Company updated successfully"
-            });
+            return Ok(new ApiResponse<string> { Success = true, Message = "Company updated successfully" });
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<ApiResponse<string>>> DeleteCompany(int id)
         {
-            var userId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
-            var isDirector = bool.Parse(User.FindFirst("IsDirector")?.Value ?? "false");
-
-            if (userId == 0)
+            if (!Request.Headers.TryGetValue("userId", out var userIdHeader) ||
+                !int.TryParse(userIdHeader.FirstOrDefault(), out int userId) || userId == 0)
                 return Unauthorized(new ApiResponse<string> { Success = false, Message = "User not authenticated" });
+
+            bool.TryParse(Request.Headers["isDirector"].FirstOrDefault(), out bool isDirector);
 
             var success = await _companyService.DeleteCompany(id, userId, isDirector);
             if (!success)
                 return BadRequest(new ApiResponse<string> { Success = false, Message = "Failed to delete company" });
 
-            return Ok(new ApiResponse<string>
-            {
-                Success = true,
-                Message = "Company deleted successfully"
-            });
+            return Ok(new ApiResponse<string> { Success = true, Message = "Company deleted successfully" });
         }
-
+        
         [HttpPost("check-duplicate")]
         public async Task<ActionResult<ApiResponse<DuplicateCheckResponse>>> CheckDuplicate([FromBody] DuplicateCheckRequest request)
         
@@ -199,41 +191,33 @@ namespace EmailTrackingAPI.Controllers
         [HttpPut("{id}/status")]
         public async Task<ActionResult<ApiResponse<string>>> UpdateStatus(int id, [FromBody] UpdateStatusRequest request)
         {
-            var userId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
-            var isDirector = bool.Parse(User.FindFirst("IsDirector")?.Value ?? "false");
-
-            if (userId == 0)
+            if (!Request.Headers.TryGetValue("userId", out var userIdHeader) ||
+                !int.TryParse(userIdHeader.FirstOrDefault(), out int userId) || userId == 0)
                 return Unauthorized(new ApiResponse<string> { Success = false, Message = "User not authenticated" });
+
+            bool.TryParse(Request.Headers["isDirector"].FirstOrDefault(), out bool isDirector);
 
             var success = await _companyService.UpdateStatus(id, request, userId, isDirector);
             if (!success)
                 return BadRequest(new ApiResponse<string> { Success = false, Message = "Failed to update status" });
 
-            return Ok(new ApiResponse<string>
-            {
-                Success = true,
-                Message = "Status updated successfully"
-            });
+            return Ok(new ApiResponse<string> { Success = true, Message = "Status updated successfully" });
         }
 
         [HttpPut("{id}/mark-as-pending")]
         public async Task<ActionResult<ApiResponse<string>>> MarkAsPending(int id)
         {
-            var userId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
-            var isDirector = bool.Parse(User.FindFirst("IsDirector")?.Value ?? "false");
-
-            if (userId == 0)
+            if (!Request.Headers.TryGetValue("userId", out var userIdHeader) ||
+                !int.TryParse(userIdHeader.FirstOrDefault(), out int userId) || userId == 0)
                 return Unauthorized(new ApiResponse<string> { Success = false, Message = "User not authenticated" });
+
+            bool.TryParse(Request.Headers["isDirector"].FirstOrDefault(), out bool isDirector);
 
             var success = await _companyService.MarkAsPending(id, userId, isDirector);
             if (!success)
                 return BadRequest(new ApiResponse<string> { Success = false, Message = "Failed to mark as pending" });
 
-            return Ok(new ApiResponse<string>
-            {
-                Success = true,
-                Message = "Company marked as pending successfully"
-            });
+            return Ok(new ApiResponse<string> { Success = true, Message = "Company marked as pending successfully" });
         }
     }
 }

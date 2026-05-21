@@ -33,6 +33,10 @@ namespace EmailTrackingAPI.Data
             modelBuilder.Entity<Company>()
                 .HasKey(c => c.Id);
 
+            // Username is not a DB column — it's populated via join in the service
+            modelBuilder.Entity<Company>()
+                .Ignore(c => c.Username);
+
             modelBuilder.Entity<Company>()
                 .HasOne<User>()
                 .WithMany()

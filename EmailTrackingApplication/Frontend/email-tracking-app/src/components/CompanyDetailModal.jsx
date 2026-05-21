@@ -18,18 +18,8 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
     setError('');
-  };
-
-  const handleToggle = (fieldName) => {
-    setFormData((prev) => ({
-      ...prev,
-      [fieldName]: !prev[fieldName],
-    }));
   };
 
   const handleSave = async (e) => {
@@ -48,17 +38,18 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
         userId,
         isDirector,
         {
-          companyName: formData.companyName,
-          region: formData.region,
-          link: formData.link,
-          emails: formData.emails,
-          painPoints: formData.painPoints,
-          exactNeeds: formData.exactNeeds,
-          buyingTrigger: formData.buyingTrigger,
+          companyName:    formData.companyName,
+          region:         formData.region,
+          link:           formData.link,
+          emails:         formData.emails,
+          status:         formData.status,
+          painPoints:     formData.painPoints,
+          exactNeeds:     formData.exactNeeds,
+          buyingTrigger:  formData.buyingTrigger,
           bestPitchAngle: formData.bestPitchAngle,
-          whyStrongFit: formData.whyStrongFit,
-          isEmailSent: formData.isEmailSent,
-          status: formData.status,
+          whyStrongFit:   formData.whyStrongFit,
+          emailSub:       formData.emailSub,
+          emailBody:      formData.emailBody,
         }
       );
 
@@ -77,14 +68,12 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
   };
 
   const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this company? This action cannot be undone.')) {
+    if (!window.confirm('Are you sure you want to delete this company? This action cannot be undone.'))
       return;
-    }
 
     setLoading(true);
     try {
       const response = await companiesAPI.deleteCompany(company.id, userId, isDirector);
-
       if (response.success) {
         onCompanyUpdated();
         onShowToast('Company deleted successfully.', 'success');
@@ -110,17 +99,16 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
         </div>
 
         <form onSubmit={handleSave} className="detail-modal-form">
-          {/* Basic Information */}
+
+          {/* ── Basic Information ── */}
           <div className="form-section">
             <h3>Basic Information</h3>
-            
+
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="companyName">Company Name</label>
                 <input
-                  type="text"
-                  id="companyName"
-                  name="companyName"
+                  type="text" id="companyName" name="companyName"
                   value={formData.companyName || ''}
                   onChange={handleInputChange}
                   disabled={!canEdit || loading}
@@ -130,9 +118,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
               <div className="form-group">
                 <label htmlFor="region">Region</label>
                 <input
-                  type="text"
-                  id="region"
-                  name="region"
+                  type="text" id="region" name="region"
                   value={formData.region || ''}
                   onChange={handleInputChange}
                   disabled={!canEdit || loading}
@@ -145,9 +131,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
               <div className="form-group full-width">
                 <label htmlFor="link">Company Link</label>
                 <input
-                  type="url"
-                  id="link"
-                  name="link"
+                  type="text" id="link" name="link"
                   value={formData.link || ''}
                   onChange={handleInputChange}
                   disabled={!canEdit || loading}
@@ -160,8 +144,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
               <div className="form-group full-width">
                 <label htmlFor="emails">Email Addresses</label>
                 <textarea
-                  id="emails"
-                  name="emails"
+                  id="emails" name="emails"
                   value={formData.emails || ''}
                   onChange={handleInputChange}
                   disabled={!canEdit || loading}
@@ -170,18 +153,37 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
                 />
               </div>
             </div>
+
+            <div className="form-row">
+              <div className="form-group full-width">
+                <label htmlFor="status">Status</label>
+                <select
+                  id="status" name="status"
+                  value={formData.status || 'Pending'}  
+                  onChange={handleInputChange}
+                  disabled={!canEdit || loading}
+                  className="status-select"
+                >
+                  <option value="Pending">Pending</option>
+                  <option value="Email Sent">Email Sent</option>
+                  <option value="First Followup email sent">First Follow-up email sent</option>
+                  <option value="Second Follow up email sent">Second Follow-up email sent</option>
+                  <option value="Interested">Interested</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
+              </div>
+            </div>
           </div>
 
-          {/* Sales Information */}
+          {/* ── Sales Information ── */}
           <div className="form-section">
             <h3>Sales Information</h3>
-            
+
             <div className="form-row">
               <div className="form-group full-width">
                 <label htmlFor="painPoints">Pain Points</label>
                 <textarea
-                  id="painPoints"
-                  name="painPoints"
+                  id="painPoints" name="painPoints"
                   value={formData.painPoints || ''}
                   onChange={handleInputChange}
                   disabled={!canEdit || loading}
@@ -195,8 +197,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
               <div className="form-group full-width">
                 <label htmlFor="exactNeeds">Exact Needs</label>
                 <textarea
-                  id="exactNeeds"
-                  name="exactNeeds"
+                  id="exactNeeds" name="exactNeeds"
                   value={formData.exactNeeds || ''}
                   onChange={handleInputChange}
                   disabled={!canEdit || loading}
@@ -210,8 +211,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
               <div className="form-group full-width">
                 <label htmlFor="buyingTrigger">Buying Trigger</label>
                 <textarea
-                  id="buyingTrigger"
-                  name="buyingTrigger"
+                  id="buyingTrigger" name="buyingTrigger"
                   value={formData.buyingTrigger || ''}
                   onChange={handleInputChange}
                   disabled={!canEdit || loading}
@@ -225,8 +225,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
               <div className="form-group full-width">
                 <label htmlFor="bestPitchAngle">Best Pitch Angle</label>
                 <textarea
-                  id="bestPitchAngle"
-                  name="bestPitchAngle"
+                  id="bestPitchAngle" name="bestPitchAngle"
                   value={formData.bestPitchAngle || ''}
                   onChange={handleInputChange}
                   disabled={!canEdit || loading}
@@ -240,8 +239,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
               <div className="form-group full-width">
                 <label htmlFor="whyStrongFit">Why Strong Fit</label>
                 <textarea
-                  id="whyStrongFit"
-                  name="whyStrongFit"
+                  id="whyStrongFit" name="whyStrongFit"
                   value={formData.whyStrongFit || ''}
                   onChange={handleInputChange}
                   disabled={!canEdit || loading}
@@ -252,72 +250,51 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
             </div>
           </div>
 
-          {/* Status Information */}
+          {/* ── Email ── */}
           <div className="form-section">
-            <h3>Status</h3>
-            
-            <div className="form-row">
-              <div className="form-group">
-                <label>Email Sent</label>
-                <div className="toggle-group">
-                  <button
-                    type="button"
-                    className={`toggle-button ${formData.isEmailSent ? 'active' : ''}`}
-                    onClick={() => handleToggle('isEmailSent')}
-                    disabled={!canEdit || loading}
-                  >
-                    <span className={`toggle-indicator ${formData.isEmailSent ? 'yes' : 'no'}`}>
-                      {formData.isEmailSent ? 'Yes' : 'No'}
-                    </span>
-                  </button>
-                </div>
-              </div>
+            <h3>Email</h3>
 
-              <div className="form-group">
-                <label>Status</label>
-                <div className="toggle-group">
-                  <button
-                    type="button"
-                    className={`toggle-button ${formData.status ? 'active' : ''}`}
-                    onClick={() => handleToggle('status')}
-                    disabled={!canEdit || loading}
-                  >
-                    <span className={`toggle-indicator ${formData.status ? 'active-status' : 'inactive-status'}`}>
-                      {formData.status ? 'Active' : 'Inactive'}
-                    </span>
-                  </button>
-                </div>
+            <div className="form-row">
+              <div className="form-group full-width">
+                <label htmlFor="emailSub">Subject</label>
+                <input
+                  type="text" id="emailSub" name="emailSub"
+                  value={formData.emailSub || ''}
+                  onChange={handleInputChange}
+                  disabled={!canEdit || loading}
+                  placeholder="Enter email subject"
+                />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group full-width">
+                <label htmlFor="emailBody">Email Body</label>
+                <textarea
+                  id="emailBody" name="emailBody"
+                  value={formData.emailBody || ''}
+                  onChange={handleInputChange}
+                  disabled={!canEdit || loading}
+                  placeholder="Write your email body here..."
+                  rows="6"
+                />
               </div>
             </div>
           </div>
 
           {error && <div className="error-message">{error}</div>}
 
-          {/* Action Buttons */}
+          {/* ── Action Buttons ── */}
           <div className="modal-actions">
-            <button
-              type="button"
-              className="button button-secondary"
-              onClick={onClose}
-              disabled={loading}
-            >
+            <button type="button" className="button button-secondary" onClick={onClose} disabled={loading}>
               Cancel
             </button>
             {canEdit && (
               <>
-                <button
-                  type="submit"
-                  className="button button-primary"
-                  disabled={loading}
-                >
+                <button type="submit" className="button button-primary" disabled={loading}>
                   {loading ? 'Saving...' : 'Save Changes'}
                 </button>
-                <button
-                  type="button"
-                  className="button button-danger"
-                  onClick={handleDelete}
-                  disabled={loading}
-                >
+                <button type="button" className="button button-danger" onClick={handleDelete} disabled={loading}>
                   Delete Company
                 </button>
               </>

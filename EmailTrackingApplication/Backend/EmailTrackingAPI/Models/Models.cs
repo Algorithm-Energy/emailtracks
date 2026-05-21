@@ -38,7 +38,10 @@ namespace EmailTrackingAPI.Models
         public string? BestPitchAngle { get; set; }
         public string? WhyStrongFit { get; set; }
         public string? Status { get; set; }
+        public string? EmailSub { get; set; }
+        public string? EmailBody { get; set; }
         public int UserId { get; set; }
+        public string? Username { get; set; }  // not mapped, populated via join
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime? LastEmailSentAt { get; set; }
@@ -64,6 +67,8 @@ namespace EmailTrackingAPI.Models
         public string? BestPitchAngle { get; set; }
         public string? WhyStrongFit { get; set; }
         public string? Status { get; set; }
+        public string? EmailSub { get; set; }
+        public string? EmailBody { get; set; }
     }
 
     public class UpdateStatusRequest

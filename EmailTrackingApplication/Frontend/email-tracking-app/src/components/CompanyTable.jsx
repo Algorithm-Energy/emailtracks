@@ -13,11 +13,14 @@ export const CompanyTable = ({
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
-  const canEdit = (company) => isDirector || company.userId === userId;
-
   const parseEmails = (emailString) => {
     if (!emailString) return [];
-    return emailString.split(/[,;]/).map((email) => email.trim()).filter((email) => email);
+    return emailString.split(/[,;]/).map((e) => e.trim()).filter((e) => e);
+  };
+
+  const getStatusClass = (status) => {
+    if (!status) return 'status-pending';
+    return 'status-' + status.toLowerCase().replace(/\s+/g, '-');
   };
 
   const handleRowClick = (company) => {
@@ -35,7 +38,6 @@ export const CompanyTable = ({
     handleCloseDetailModal();
   };
 
-
   return (
     <>
       <div className="table-container">
@@ -46,59 +48,76 @@ export const CompanyTable = ({
         ) : (
           <div className="table-wrapper">
             <table className="company-table">
+              <colgroup>
+                <col />
+                <col />
+                <col />
+                <col />
+                {isDirector && <col />}
+              </colgroup>
               <thead>
                 <tr>
                   <th>Company Name</th>
                   <th>Region</th>
-                  <th>Contacts</th>
-                  <th>Email Sent</th>
-                  <th>Status</th>
-                  {isDirector && <th>Owner</th>}
+                  <th className="col-contacts">Contacts</th>
+                  <th className="col-status">Status</th>
+                  {isDirector && <th className="col-owner">Prospector</th>}
                 </tr>
               </thead>
               <tbody>
-                {companies.map((company) => (
-                  <tr
-                    key={company.id}
-                    className="clickable-row"
-                    onClick={() => handleRowClick(company)}
-                  >
-                    <td className="company-name-cell">
-                      {company.link ? (
-                        <a
-                          href={company.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="company-link"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          {company.companyName}
-                        </a>
-                      ) : (
-                        company.companyName
+                {companies.map((company) => {
+                  const emails = parseEmails(company.emails);
+                  return (
+                    <tr
+                      key={company.id}
+                      className="clickable-row"
+                      onClick={() => handleRowClick(company)}
+                    >
+                      <td className="company-name-cell">
+                        {company.link ? (
+                          <a
+                            href={company.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="company-link"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {company.companyName}
+                          </a>
+                        ) : (
+                          company.companyName
+                        )}
+                      </td>
+
+                      <td>{company.region}</td>
+
+                      <td className="contacts-cell">
+                        <div className="email-count-badge-wrapper">
+                          <div className="email-count-badge">
+                            {emails.length} contact{emails.length !== 1 ? 's' : ''}
+                          </div>
+                          {emails.length > 0 && (
+                            <div className="email-tooltip">
+                              {emails.map((email, i) => (
+                                <span key={i} className="email-tooltip-item">{email}</span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+
+                      <td className="status-cell">
+                        <span className={`status-badge ${getStatusClass(company.status)}`}>
+                          {company.status || 'Pending'}
+                        </span>
+                      </td>
+
+                      {isDirector && (
+                        <td className="owner-cell">{company.username || '—'}</td>
                       )}
-                    </td>
-                    <td>{company.region}</td>
-                    <td className="contacts-cell">
-                      <div className="email-count-badge">
-                        {parseEmails(company.emails).length} contact(s)
-                      </div>
-                    </td>
-                    <td className="email-sent-cell">
-                      <span className={`toggle-badge ${company.isEmailSent ? 'yes' : 'no'}`}>
-                        {company.isEmailSent ? '✓ Yes' : '✗ No'}
-                      </span>
-                    </td>
-                    <td className="status-cell">
-                      <span className={`status-toggle ${company.status ? 'active' : 'inactive'}`}>
-                        {company.status ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
-                    {isDirector && (
-                      <td className="owner-cell">{company.username}</td>
-                    )}
-                  </tr>
-                ))}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

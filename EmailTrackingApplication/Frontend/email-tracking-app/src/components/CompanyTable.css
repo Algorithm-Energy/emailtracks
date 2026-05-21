@@ -3,7 +3,7 @@
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .empty-state {
@@ -14,34 +14,52 @@
 }
 
 .table-wrapper {
-  overflow-x: auto;
+  overflow: visible;
 }
 
 .company-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 800px;
+  table-layout: fixed;
 }
 
+/* Column widths */
+.company-table colgroup col:nth-child(1) { width: 30%; }  /* Company Name */
+.company-table colgroup col:nth-child(2) { width: 20%; }  /* Region */
+.company-table colgroup col:nth-child(3) { width: 15%; }  /* Contacts */
+.company-table colgroup col:nth-child(4) { width: 20%; }  /* Status */
+.company-table colgroup col:nth-child(5) { width: 15%; }  /* Owner (director only) */
+
 .company-table thead {
-  background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f5 100%);
+  background-color: #f5f7fa;
   border-bottom: 2px solid #e0e0e0;
 }
 
 .company-table th {
-  padding: 18px 20px;
+  padding: 14px 16px;
   text-align: left;
   font-weight: 600;
-  color: #333;
-  font-size: 13px;
+  color: #555;
+  font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
   background-color: #f5f7fa;
+  white-space: nowrap;
+}
+
+.company-table th.col-contacts,
+.company-table th.col-status,
+.company-table th.col-owner {
+  text-align: center;
 }
 
 .company-table tbody tr {
   border-bottom: 1px solid #f0f0f0;
-  transition: all 0.2s ease;
+  transition: background-color 0.15s ease;
+}
+
+.company-table tbody tr:last-child {
+  border-bottom: none;
 }
 
 .clickable-row {
@@ -49,17 +67,20 @@
 }
 
 .clickable-row:hover {
-  background-color: #f9f9f9;
-  box-shadow: inset 0 0 0 1px #e8e8e8;
+  background-color: #f8f9ff;
 }
 
 .company-table td {
-  padding: 18px 20px;
+  padding: 14px 16px;
   font-size: 14px;
   color: #333;
   vertical-align: middle;
+  overflow: visible;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
+/* Company Name */
 .company-name-cell {
   font-weight: 600;
   color: #333;
@@ -69,10 +90,10 @@
   color: #667eea;
   text-decoration: none;
   font-weight: 600;
-  transition: all 0.2s;
+  transition: color 0.2s;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .company-link:hover {
@@ -82,163 +103,151 @@
 
 .company-link::before {
   content: '🔗';
-  font-size: 12px;
+  font-size: 11px;
 }
 
+/* Contacts */
 .contacts-cell {
   text-align: center;
+  overflow: visible;
+  position: relative;
+}
+
+.email-count-badge-wrapper {
+  position: relative;
+  display: inline-block;
+  z-index: 1;
+}
+
+.email-count-badge-wrapper:hover {
+  z-index: 9999;
 }
 
 .email-count-badge {
   display: inline-block;
   background-color: #e3f2fd;
-  color: #1976d2;
-  padding: 6px 12px;
+  color: #1565c0;
+  padding: 5px 12px;
   border-radius: 20px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
+  cursor: default;
+  white-space: nowrap;
 }
 
-.email-sent-cell,
+.email-tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #1a1a2e;
+  color: #fff;
+  border-radius: 8px;
+  padding: 10px 14px;
+  min-width: 180px;
+  max-width: 280px;
+  z-index: 100;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  flex-direction: column;
+  gap: 5px;
+}
+
+.email-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #1a1a2e;
+}
+
+.email-count-badge-wrapper:hover .email-tooltip {
+  display: flex;
+}
+
+.email-tooltip-item {
+  font-size: 12px;
+  color: #a8c7fa;
+  word-break: break-all;
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.email-tooltip-item:last-child {
+  border-bottom: none;
+}
+
+/* Status */
 .status-cell {
   text-align: center;
 }
 
-.toggle-badge {
+.status-badge {
   display: inline-block;
-  padding: 8px 16px;
+  padding: 5px 11px;
   border-radius: 20px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.toggle-badge.yes {
-  background-color: #c8e6c9;
+.status-badge.status-pending {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+.status-badge.status-email-sent {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+.status-badge.status-first-followup-email-sent {
+  background-color: #ede7f6;
+  color: #4527a0;
+}
+
+.status-badge.status-second-follow-up-email-sent {
+  background-color: #f3e5f5;
+  color: #6a1b9a;
+}
+
+.status-badge.status-interested {
+  background-color: #e8f5e9;
+  color: #1b5e20;
+}
+
+.status-badge.status-inactive {
+  background-color: #ffebee;
+  color: #b71c1c;
+}
+
+.status-badge.status-active {
+  background-color: #e8f5e9;
   color: #2e7d32;
 }
 
-.toggle-badge.no {
-  background-color: #ffcdd2;
-  color: #c62828;
-}
-
-.status-toggle {
-  display: inline-block;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.status-toggle.active {
-  background-color: #c8e6c9;
-  color: #2e7d32;
-}
-
-.status-toggle.inactive {
-  background-color: #ffcdd2;
-  color: #c62828;
-}
-
+/* Owner */
 .owner-cell {
+  text-align: center;
   font-weight: 500;
-  color: #666;
+  color: #555;
+  font-size: 13px;
 }
 
-/* Media Query for smaller screens */
+/* Responsive */
 @media (max-width: 768px) {
   .company-table {
-    min-width: 600px;
+    table-layout: auto;
   }
 
   .company-table th,
   .company-table td {
-    padding: 14px 12px;
+    padding: 12px 10px;
     font-size: 12px;
-  }
-
-  .company-table th {
-    font-size: 12px;
-  }
-}
-
-
-.action-buttons {
-  display: flex;
-  gap: 6px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.button-edit,
-.button-delete,
-.button-save,
-.button-cancel {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 500;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-
-.button-edit {
-  background-color: #ff9800;
-  color: white;
-}
-
-.button-edit:hover:not(:disabled) {
-  background-color: #f57c00;
-}
-
-.button-delete {
-  background-color: #f44336;
-  color: white;
-}
-
-.button-delete:hover:not(:disabled) {
-  background-color: #d32f2f;
-}
-
-.button-save {
-  background-color: #4caf50;
-  color: white;
-}
-
-.button-save:hover:not(:disabled) {
-  background-color: #45a049;
-}
-
-.button-cancel {
-  background-color: #9e9e9e;
-  color: white;
-}
-
-.button-cancel:hover:not(:disabled) {
-  background-color: #757575;
-}
-
-.button-edit:disabled,
-.button-delete:disabled,
-.button-save:disabled,
-.button-cancel:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.readonly {
-  color: #999;
-  font-size: 12px;
-}
-
-@media (max-width: 1024px) {
-  .company-table {
-    min-width: 100%;
   }
 }
