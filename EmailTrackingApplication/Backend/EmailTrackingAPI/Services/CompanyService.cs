@@ -96,11 +96,11 @@ namespace EmailTrackingAPI.Services
             company.Region = request.Region ?? company.Region;
             company.Link = request.Link ?? company.Link;
             company.Emails = request.Emails ?? company.Emails;
-            company.Column1 = request.Column1 ?? company.Column1;
-            company.Column2 = request.Column2 ?? company.Column2;
-            company.Column3 = request.Column3 ?? company.Column3;
-            company.Column4 = request.Column4 ?? company.Column4;
-            company.Column5 = request.Column5 ?? company.Column5;
+            company.PainPoints = request.PainPoints ?? company.PainPoints;
+            company.ExactNeeds = request.ExactNeeds ?? company.ExactNeeds;
+            company.BuyingTrigger = request.BuyingTrigger ?? company.BuyingTrigger;
+            company.BestPitchAngle = request.BestPitchAngle ?? company.BestPitchAngle;
+            company.WhyStrongFit = request.WhyStrongFit ?? company.WhyStrongFit;
             company.UpdatedAt = DateTime.UtcNow;
 
             _context.Companies.Update(company);

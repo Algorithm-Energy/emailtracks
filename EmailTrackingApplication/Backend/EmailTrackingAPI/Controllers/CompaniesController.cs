@@ -123,7 +123,7 @@ namespace EmailTrackingAPI.Controllers
             var isDirector = bool.Parse(User.FindFirst("IsDirector")?.Value ?? "false");
 
             if (userId == 0)
-                return Unauthorized(new ApiResponse<string> { Success = false, Message = "User not authenticated" });
+                return Unauthorized(new ApiResponse<string> { Success = false, Message = "User not authenticated - Failed to update company" });
 
             var success = await _companyService.UpdateCompany(id, request, userId, isDirector);
             if (!success)

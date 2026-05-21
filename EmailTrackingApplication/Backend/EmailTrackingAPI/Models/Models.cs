@@ -32,11 +32,11 @@ namespace EmailTrackingAPI.Models
         public string? Region { get; set; }
         public string? Link { get; set; }
         public string? Emails { get; set; }
-        public string? Column1 { get; set; }
-        public string? Column2 { get; set; }
-        public string? Column3 { get; set; }
-        public string? Column4 { get; set; }
-        public string? Column5 { get; set; }
+        public string? PainPoints { get; set; }
+        public string? ExactNeeds { get; set; }
+        public string? BuyingTrigger { get; set; }
+        public string? BestPitchAngle { get; set; }
+        public string? WhyStrongFit { get; set; }
         public string? Status { get; set; }
         public int UserId { get; set; }
         public DateTime CreatedAt { get; set; }
@@ -58,11 +58,11 @@ namespace EmailTrackingAPI.Models
         public string? Region { get; set; }
         public string? Link { get; set; }
         public string? Emails { get; set; }
-        public string? Column1 { get; set; }
-        public string? Column2 { get; set; }
-        public string? Column3 { get; set; }
-        public string? Column4 { get; set; }
-        public string? Column5 { get; set; }
+        public string? PainPoints { get; set; }
+        public string? ExactNeeds { get; set; }
+        public string? BuyingTrigger { get; set; }
+        public string? BestPitchAngle { get; set; }
+        public string? WhyStrongFit { get; set; }
         public string? Status { get; set; }
     }
 
