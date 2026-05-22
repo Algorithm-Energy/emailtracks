@@ -42,7 +42,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("AllowReactApp");
+app.UseStaticFiles();
 app.UseAuthorization();
+
+// Map API controllers
 app.MapControllers();
+
+// Serve React app - SPA routing fallback
+app.MapFallbackToFile("index.html");
 
 app.Run();
