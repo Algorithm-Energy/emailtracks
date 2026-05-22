@@ -166,8 +166,8 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
                 >
                   <option value="Pending">Pending</option>
                   <option value="Email Sent">Email Sent</option>
-                  <option value="First Followup email sent">First Follow-up email sent</option>
-                  <option value="Second Follow up email sent">Second Follow-up email sent</option>
+                  <option value="First Follow-up email sent">First Follow-up email sent</option>
+                  <option value="Second Follow-up email sent">Second Follow-up email sent</option>
                   <option value="Interested">Interested</option>
                   <option value="Inactive">Inactive</option>
                 </select>

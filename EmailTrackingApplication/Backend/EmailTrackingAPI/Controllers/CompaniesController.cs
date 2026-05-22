@@ -39,7 +39,9 @@ namespace EmailTrackingAPI.Controllers
                 });
             }
             //var userId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
-            var isDirector = bool.Parse(User.FindFirst("IsDirector")?.Value ?? "false");
+                var isDirectorHeader = Request.Headers["IsDirector"].FirstOrDefault();
+
+                bool isDirector = bool.TryParse(isDirectorHeader, out var result) && result;
 
             if (userId == 0)
                 return Unauthorized(new ApiResponse<List<Company>> { Success = false, Message = "User not authenticated" });

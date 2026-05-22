@@ -11,8 +11,7 @@ export const CompanyTable = ({
   onShowToast,
 }) => {
   const [selectedCompany, setSelectedCompany] = useState(null);
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false); console.log('Rendering CompanyTable with companies:', companies);
   const parseEmails = (emailString) => {
     if (!emailString) return [];
     return emailString.split(/[,;]/).map((e) => e.trim()).filter((e) => e);
@@ -61,7 +60,7 @@ export const CompanyTable = ({
                   <th>Region</th>
                   <th className="col-contacts">Contacts</th>
                   <th className="col-status">Status</th>
-                  {isDirector && <th className="col-owner">Prospector</th>}
+                  <th className="col-owner">Prospector</th>
                 </tr>
               </thead>
               <tbody>
@@ -70,8 +69,12 @@ export const CompanyTable = ({
                   return (
                     <tr
                       key={company.id}
-                      className="clickable-row"
-                      onClick={() => handleRowClick(company)}
+                      className={Number(company.userId) === Number(userId) || isDirector ? "clickable-row" : "non-clickable-row"}
+                      onClick={
+                        Number(company.userId) === Number(userId) || isDirector
+                          ? () => handleRowClick(company)
+                          : undefined
+                      }
                     >
                       <td className="company-name-cell">
                         {company.link ? (
@@ -112,9 +115,9 @@ export const CompanyTable = ({
                         </span>
                       </td>
 
-                      {isDirector && (
+                      
                         <td className="owner-cell">{company.username || '—'}</td>
-                      )}
+                      
                     </tr>
                   );
                 })}

@@ -31,10 +31,11 @@ namespace EmailTrackingAPI.Services
         // ── GetCompanies: join Users to populate Username ──────────────────────
         public async Task<List<Company>> GetCompanies(int userId, bool isDirector)
         {
-            var query = isDirector
-                ? _context.Companies.AsQueryable()
-                : _context.Companies.Where(c => c.UserId == userId);
-
+            // var query = isDirector
+            //     ? _context.Companies.AsQueryable()
+            //     : _context.Companies.Where(c => c.UserId == userId);
+            var query =_context.Companies.AsQueryable();
+            
             var companies = await query
                 .OrderByDescending(c => c.CreatedAt)
                 .Join(

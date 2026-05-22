@@ -70,6 +70,15 @@
   background-color: #f8f9ff;
 }
 
+.non-clickable-row {
+  cursor: not-allowed;
+}
+
+.non-clickable-row:hover {
+  background-color: transparent;
+}
+
+
 .company-table td {
   padding: 14px 16px;
   font-size: 14px;
@@ -206,7 +215,7 @@
   color: #1565c0;
 }
 
-.status-badge.status-first-followup-email-sent {
+.status-badge.status-first-follow-up-email-sent {
   background-color: #ede7f6;
   color: #4527a0;
 }

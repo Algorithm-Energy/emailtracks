@@ -15,6 +15,7 @@ export const authAPI = {
 
 export const companiesAPI = {
   getCompanies: async (userId, isDirector) => {
+    console.log('Fetching companies with userId:', userId, 'isDirector:', isDirector);
     const response = await fetch(`${API_BASE_URL}/companies`, {
       headers: {
         'userId': userId,

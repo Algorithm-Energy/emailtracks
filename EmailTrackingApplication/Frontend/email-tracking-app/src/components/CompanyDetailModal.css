@@ -33,10 +33,25 @@
   }
 }
 
-.detail-modal-header {
+/* .detail-modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 28px;
+  border-bottom: 2px solid #f0f0f0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+} */
+
+
+.detail-modal-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
   padding: 28px;
   border-bottom: 2px solid #f0f0f0;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
