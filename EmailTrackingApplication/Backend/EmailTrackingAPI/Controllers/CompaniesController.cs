@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 namespace EmailTrackingAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("apiEmail/[controller]")]
     public class CompaniesController : ControllerBase
     {
         private readonly ICompanyService _companyService;

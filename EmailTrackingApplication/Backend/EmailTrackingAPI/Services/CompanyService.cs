@@ -61,7 +61,8 @@ namespace EmailTrackingAPI.Services
                         Username       = u.Username,
                         CreatedAt      = c.CreatedAt,
                         UpdatedAt      = c.UpdatedAt,
-                        LastEmailSentAt = c.LastEmailSentAt
+                        LastEmailSentAt = c.LastEmailSentAt,
+                        isApproved       = c.isApproved
                     })
                 .ToListAsync();
 
@@ -177,9 +178,8 @@ namespace EmailTrackingAPI.Services
 
             if (!isDirector && company.UserId != userId)
                 return false;
-
-            company.Status    = request.Status;
             company.UpdatedAt = DateTime.UtcNow;
+            company.isApproved = request.Status ; // ← only set isApproved to true if status is Approved, otherwise keep existing value
 
             _context.Companies.Update(company);
             await _context.SaveChangesAsync();

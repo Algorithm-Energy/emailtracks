@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace EmailTrackingAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("apiEmail/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {

@@ -22,6 +22,11 @@ export const CompanyTable = ({
     return 'status-' + status.toLowerCase().replace(/\s+/g, '-');
   };
 
+  const getApprovalClass = (status) => {
+    if (!status) return 'status-unapproved';
+    const adminStatus = status === 1 ? 'approved' : 'unapproved';
+    return 'status-' + adminStatus;
+  };
   const handleRowClick = (company) => {
     setSelectedCompany(company);
     setIsDetailModalOpen(true);
@@ -53,6 +58,7 @@ export const CompanyTable = ({
                 <col />
                 <col />
                 <col />
+                <col />
               </colgroup>
               <thead>
                 <tr>
@@ -61,6 +67,7 @@ export const CompanyTable = ({
                   <th className="col-contacts">Contacts</th>
                   <th className="col-status">Status</th>
                   <th className="col-owner">Prospector</th>
+                  <th className="col-owner">Admin Approval</th>
                 </tr>
               </thead>
               <tbody>
@@ -116,8 +123,14 @@ export const CompanyTable = ({
                       </td>
 
                       
-                        <td className="owner-cell">{company.username || '—'}</td>
+                      <td className="owner-cell">{company.username || '—'}</td>
                       
+                      <td className="status-cell">
+                        <span className={`status-badge ${getApprovalClass(company.isApproved)}`}>
+                          
+                          {getApprovalClass(company.isApproved) === 'status-approved' ? 'Approved' : 'Under Review'}
+                        </span>
+                      </td>
                     </tr>
                   );
                 })}

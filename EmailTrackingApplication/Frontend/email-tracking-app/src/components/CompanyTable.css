@@ -29,6 +29,7 @@
 .company-table colgroup col:nth-child(3) { width: 15%; }  /* Contacts */
 .company-table colgroup col:nth-child(4) { width: 20%; }  /* Status */
 .company-table colgroup col:nth-child(5) { width: 15%; }  /* Owner (director only) */
+.company-table colgroup col:nth-child(6) { width: 20%; }  /* Admin Approval */
 
 .company-table thead {
   background-color: #f5f7fa;
@@ -238,6 +239,16 @@
 .status-badge.status-active {
   background-color: #e8f5e9;
   color: #2e7d32;
+}
+
+.status-badge.status-approved {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-badge.status-unapproved {
+  background-color: #ffebee;
+  color: #b71c1c;
 }
 
 /* Owner */

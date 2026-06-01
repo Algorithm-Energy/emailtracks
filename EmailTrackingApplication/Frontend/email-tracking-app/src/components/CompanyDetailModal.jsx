@@ -11,6 +11,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
     if (company) {
       setFormData({ ...company });
       setError('');
+      console.log('Loaded company data into form:', company);
     }
   }, [company]);
 
@@ -88,6 +89,27 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
     }
   };
 
+  const handleApproved = async () => {
+    if (!window.confirm('Are you sure you want to Approved this company?'))
+      return;
+
+    setLoading(true);
+    try {
+      const status = formData.isApproved === 1 ? 0 : 1;
+      const response = await companiesAPI.approveCompany(company.id, userId, isDirector, status);
+      if (response.success) {
+        onCompanyUpdated();
+        onShowToast('Company deleted successfully.', 'success');
+        onClose();
+      } else {
+        setError(response.message || 'Error deleting company.');
+      }
+    } catch (err) {
+      setError('Error deleting company. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
   if (!isOpen || !company) return null;
 
   return (
@@ -161,7 +183,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
                   id="status" name="status"
                   value={formData.status || 'Pending'}  
                   onChange={handleInputChange}
-                  disabled={!canEdit || loading}
+                  disabled={!canEdit || loading || formData.isApproved === 1 ? false : true}
                   className="status-select"
                 >
                   <option value="Pending">Pending</option>
@@ -291,6 +313,12 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
             </button>
             {canEdit && (
               <>
+              {isDirector && (
+                <button type="button" className="button button-success" onClick={handleApproved} disabled={loading}>
+                  {formData.isApproved ===1 ?'Unapprove' : 'Approve'}
+                </button>
+               )
+              }
                 <button type="submit" className="button button-primary" disabled={loading}>
                   {loading ? 'Saving...' : 'Save Changes'}
                 </button>

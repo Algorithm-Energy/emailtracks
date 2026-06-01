@@ -312,6 +312,19 @@
   box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
 }
 
+.button-success {
+  background-color: #16a34a; /* clean success green */
+  color: white;
+  border: 1.5px solid #15803d;
+}
+
+.button-success:hover:not(:disabled) {
+  background-color: #15803d;
+  border-color: #166534;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35);
+}
+
 .button:disabled {
   opacity: 0.6;
   cursor: not-allowed;

@@ -1,5 +1,6 @@
 // const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-const API_BASE_URL = 'http://localhost:5000/api';
+// const API_BASE_URL = 'http://localhost:5000/apiEmail';
+const API_BASE_URL = '/EmailTrackingApp/apiEmail';
 
 export const authAPI = {
   login: async (usernameOrEmail, password) => {
@@ -94,6 +95,19 @@ export const companiesAPI = {
         'userId': userId,
         'isDirector': isDirector,
       },
+    });
+    return response.json();
+  },
+
+  approveCompany: async (companyId, userId, isDirector, status) => {
+    const response = await fetch(`${API_BASE_URL}/companies/${companyId}/status`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'userId': userId,
+        'isDirector': isDirector,
+      },
+      body: JSON.stringify({ status }),
     });
     return response.json();
   },
