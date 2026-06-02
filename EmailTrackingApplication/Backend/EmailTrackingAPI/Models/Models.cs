@@ -46,6 +46,7 @@ namespace EmailTrackingAPI.Models
         public DateTime UpdatedAt { get; set; }
         public DateTime? LastEmailSentAt { get; set; }
         public int isApproved   { get; set; } // 
+        public string RecordType   { get; set; } // 
     }   
 
     public class AddCompanyRequest

@@ -16,12 +16,13 @@ export const authAPI = {
 };
 
 export const companiesAPI = {
-  getCompanies: async (userId, isDirector) => {
+  getCompanies: async (userId, isDirector, recordType = 'Company') => {
     
     const response = await fetch(`${API_BASE_URL}/companies`, {
       headers: {
         'userId': userId,
         'isDirector': isDirector,
+        'recordType': recordType,
       },
     });
     return response.json();

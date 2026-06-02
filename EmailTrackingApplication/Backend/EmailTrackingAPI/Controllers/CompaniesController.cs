@@ -21,7 +21,6 @@ namespace EmailTrackingAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<ApiResponse<List<Company>>>> GetCompanies()
         {
-             Console.WriteLine(Request.Headers["userId"]);
             if (!Request.Headers.TryGetValue("userId", out var userIdHeader))
             {
                 return Unauthorized(new ApiResponse<DuplicateCheckResponse>
@@ -45,8 +44,8 @@ namespace EmailTrackingAPI.Controllers
 
             if (userId == 0)
                 return Unauthorized(new ApiResponse<List<Company>> { Success = false, Message = "User not authenticated" });
-
-            var companies = await _companyService.GetCompanies(userId, isDirector);
+            string recordType = Request.Headers["RecordType"].FirstOrDefault();
+            var companies = await _companyService.GetCompanies(userId, isDirector, recordType);
             return Ok(new ApiResponse<List<Company>>
             {
                 Success = true,

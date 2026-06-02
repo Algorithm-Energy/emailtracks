@@ -9,7 +9,7 @@ namespace EmailTrackingAPI.Services
 {
     public interface ICompanyService
     {
-        Task<List<Company>> GetCompanies(int userId, bool isDirector);
+        Task<List<Company>> GetCompanies(int userId, bool isDirector, string recordType);
         Task<Company?> GetCompanyById(int companyId, int userId, bool isDirector);
         Task<Company?> AddCompany(AddCompanyRequest request, int userId);
         Task<bool> UpdateCompany(int companyId, UpdateCompanyRequest request, int userId, bool isDirector);
@@ -29,42 +29,44 @@ namespace EmailTrackingAPI.Services
         }
 
         // ── GetCompanies: join Users to populate Username ──────────────────────
-        public async Task<List<Company>> GetCompanies(int userId, bool isDirector)
+        public async Task<List<Company>> GetCompanies(int userId, bool isDirector, string recordType)
         {
             // var query = isDirector
             //     ? _context.Companies.AsQueryable()
             //     : _context.Companies.Where(c => c.UserId == userId);
             var query =_context.Companies.AsQueryable();
             
-            var companies = await query
-                .OrderByDescending(c => c.CreatedAt)
-                .Join(
-                    _context.Users,
-                    c => c.UserId,
-                    u => u.Id,
-                    (c, u) => new Company
-                    {
-                        Id             = c.Id,
-                        CompanyName    = c.CompanyName,
-                        Region         = c.Region,
-                        Link           = c.Link,
-                        Emails         = c.Emails,
-                        PainPoints     = c.PainPoints,
-                        ExactNeeds     = c.ExactNeeds,
-                        BuyingTrigger  = c.BuyingTrigger,
-                        BestPitchAngle = c.BestPitchAngle,
-                        WhyStrongFit   = c.WhyStrongFit,
-                        Status         = c.Status,
-                        EmailSub       = c.EmailSub,
-                        EmailBody      = c.EmailBody,
-                        UserId         = c.UserId,
-                        Username       = u.Username,
-                        CreatedAt      = c.CreatedAt,
-                        UpdatedAt      = c.UpdatedAt,
-                        LastEmailSentAt = c.LastEmailSentAt,
-                        isApproved       = c.isApproved
-                    })
-                .ToListAsync();
+            var companies = await _context.Companies
+    .Where(c => c.RecordType == recordType)
+    .OrderByDescending(c => c.CreatedAt)
+    .Join(
+        _context.Users,
+        c => c.UserId,
+        u => u.Id,
+        (c, u) => new Company
+        {
+            Id = c.Id,
+            CompanyName = c.CompanyName,
+            Region = c.Region,
+            Link = c.Link,
+            Emails = c.Emails,
+            PainPoints = c.PainPoints,
+            ExactNeeds = c.ExactNeeds,
+            BuyingTrigger = c.BuyingTrigger,
+            BestPitchAngle = c.BestPitchAngle,
+            WhyStrongFit = c.WhyStrongFit,
+            Status = c.Status,
+            EmailSub = c.EmailSub,
+            EmailBody = c.EmailBody,
+            UserId = c.UserId,
+            Username = u.Username,
+            CreatedAt = c.CreatedAt,
+            UpdatedAt = c.UpdatedAt,
+            LastEmailSentAt = c.LastEmailSentAt,
+            isApproved = c.isApproved,
+            RecordType = c.RecordType
+        })
+    .ToListAsync();
 
             return companies;
         }

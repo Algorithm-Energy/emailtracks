@@ -10,6 +10,7 @@ import { authUtils } from '../services/authUtils';
 export const DashboardPage = ({ user, onLogout }) => {
   const navigate = useNavigate();
   const [companies, setCompanies] = useState([]);
+  const [selectedTab, setSelectedTab] = useState('Company');
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { toasts, showToast, removeToast } = useToast();
@@ -22,10 +23,15 @@ export const DashboardPage = ({ user, onLogout }) => {
     fetchCompanies();
   }, [user, navigate]);
 
+  useEffect(() => {
+      if (user) fetchCompanies();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedTab]);
+
   const fetchCompanies = async () => {
     setLoading(true);
     try {
-      const response = await companiesAPI.getCompanies(user.userId, user.isDirector);
+      const response = await companiesAPI.getCompanies(user.userId, user.isDirector, selectedTab);
       if (response.success) {
         setCompanies(response.data);
       } else {
@@ -45,6 +51,7 @@ export const DashboardPage = ({ user, onLogout }) => {
   };
 
   const handleAddCompany = (newCompany) => {
+    if (!newCompany || newCompany.recordType !== selectedTab) return;
     setCompanies((prev) => [...prev, newCompany]);
     showToast('Company added successfully!', 'success');
   };
@@ -77,14 +84,21 @@ export const DashboardPage = ({ user, onLogout }) => {
       <main className="dashboard-main">
         <div className="dashboard-toolbar">
           <div className="toolbar-left">
-            <h2>Companies</h2>
+            <div className="tabs">
+              <button className={`tab ${selectedTab === 'Company' ? 'active' : ''}`} onClick={() => { setSelectedTab('Company'); }}>
+                Company
+              </button>
+              <button className={`tab ${selectedTab === 'Client' ? 'active' : ''}`} onClick={() => { setSelectedTab('Client'); }}>
+                Client
+              </button>
+            </div>
             <span className="company-count">{companies.length} record(s)</span>
           </div>
           <button
             className="add-company-button"
             onClick={() => setIsModalOpen(true)}
           >
-            + Add Client / Company
+            + Add {selectedTab}
           </button>
         </div>
 
