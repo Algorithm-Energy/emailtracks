@@ -9,7 +9,7 @@ export const CompanyTable = ({
   onCompanyUpdated,
   onCompanyDeleted,
   onShowToast,
-  recordType = 'Company',
+  recordType = 'Client',
 }) => {
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false); console.log('Rendering CompanyTable with companies:', companies);
@@ -48,7 +48,7 @@ export const CompanyTable = ({
       <div className="table-container">
         {companies.length === 0 ? (
           <div className="empty-state">
-            <p>No companies found. Add your first company to get started!</p>
+            <p>No clients found. Add your first client to get started!</p>
           </div>
         ) : (
           <div className="table-wrapper">
@@ -63,7 +63,7 @@ export const CompanyTable = ({
               </colgroup>
               <thead>
                 <tr>
-                  <th>Company Name</th>
+                  <th>Client Name</th>
                   <th>Region</th>
                   <th className="col-contacts">Contacts</th>
                   <th className="col-status">Status</th>

@@ -3,7 +3,7 @@ import './AddCompanyModal.css';
 import { companiesAPI } from '../services/api';
 import { authUtils } from '../services/authUtils';
 
-export const AddCompanyModal = ({ isOpen, onClose, userId, onCompanyAdded, recordType= 'Company' }) => {
+export const AddCompanyModal = ({ isOpen, onClose, userId, onCompanyAdded, recordType= 'Client' }) => {
   const currentUser = authUtils.getUser();
   const [formData, setFormData] = useState({
     username: currentUser?.username || '',
@@ -77,7 +77,7 @@ export const AddCompanyModal = ({ isOpen, onClose, userId, onCompanyAdded, recor
     setError('');
 
     if (!formData.companyName.trim()) {
-      setError('Company Name is required.');
+      setError(`${recordType} Name is required.`);
       return;
     }
     if (!formData.region.trim()) {
@@ -95,12 +95,12 @@ export const AddCompanyModal = ({ isOpen, onClose, userId, onCompanyAdded, recor
       // Check for duplicate
       const duplicateCheck = await companiesAPI.checkDuplicate(userId, formData.companyName, recordType);
       if (duplicateCheck.data.exists) {
-        setError('This company already exists.');
+        setError(`This ${recordType.toLowerCase()} already exists.`);
         setLoading(false);
         return;
       }
 
-      // Add company - convert emails array to comma-separated string for API
+      // Add client - convert emails array to comma-separated string for API
       const response = await companiesAPI.addCompany(userId, {
         username: formData.username,
         companyName: formData.companyName,
@@ -123,10 +123,10 @@ export const AddCompanyModal = ({ isOpen, onClose, userId, onCompanyAdded, recor
         setEmailInput('');
         onClose();
       } else {
-        setError(response.message || 'Error adding company.');
+        setError(response.message || `Error adding ${recordType.toLowerCase()}.`);
       }
     } catch (err) {
-      setError('Error adding company. Please try again.');
+      setError(`Error adding ${recordType.toLowerCase()}. Please try again.`);
     } finally {
       setLoading(false);
     }
@@ -138,7 +138,7 @@ export const AddCompanyModal = ({ isOpen, onClose, userId, onCompanyAdded, recor
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Add Client / Company</h2>
+          <h2>Add {recordType}</h2>
           <button className="close-button" onClick={onClose}>×</button>
         </div>
 
@@ -157,14 +157,14 @@ export const AddCompanyModal = ({ isOpen, onClose, userId, onCompanyAdded, recor
           </div>
 
           <div className="form-group">
-            <label htmlFor="companyName">Company Name *</label>
+            <label htmlFor="companyName">{recordType} Name *</label>
             <input
               type="text"
               id="companyName"
               name="companyName"
               value={formData.companyName}
               onChange={handleInputChange}
-              placeholder="Enter company name"
+              placeholder={`Enter ${recordType} name`}
               disabled={loading}
             />
           </div>
@@ -183,14 +183,14 @@ export const AddCompanyModal = ({ isOpen, onClose, userId, onCompanyAdded, recor
           </div>
 
           <div className="form-group">
-            <label htmlFor="link">Company Link</label>
+            <label htmlFor="link">{recordType} Link</label>
             <input
               type="text"
               id="link"
               name="link"
               value={formData.link}
               onChange={handleInputChange}
-              placeholder="Enter company link (optional)"
+              placeholder={`Enter ${recordType} link (optional)`}
               disabled={loading}
             />
           </div>

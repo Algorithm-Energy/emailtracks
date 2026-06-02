@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './CompanyDetailModal.css';
 import { companiesAPI } from '../services/api';
 
-export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirector, onCompanyUpdated, onShowToast, recordType= 'Company' }) => {
+export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirector, onCompanyUpdated, onShowToast, recordType= 'Client' }) => {
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -56,20 +56,20 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
 
       if (response.success) {
         onCompanyUpdated();
-        onShowToast('Company updated successfully.', 'success');
+        onShowToast(`${recordType} updated successfully.`, 'success');
         onClose();
       } else {
-        setError(response.message || 'Error updating company.');
+        setError(response.message || `Error updating ${recordType.toLowerCase()}.`);
       }
     } catch (err) {
-      setError('Error updating company. Please try again.');
+      setError(`Error updating ${recordType.toLowerCase()}. Please try again.`);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this company? This action cannot be undone.'))
+    if (!window.confirm(`Are you sure you want to delete this ${recordType.toLowerCase()}? This action cannot be undone.`))
       return;
 
     setLoading(true);
@@ -77,20 +77,20 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
       const response = await companiesAPI.deleteCompany(company.id, userId, isDirector);
       if (response.success) {
         onCompanyUpdated();
-        onShowToast('Company deleted successfully.', 'success');
+        onShowToast(`${recordType} deleted successfully.`, 'success');
         onClose();
       } else {
-        setError(response.message || 'Error deleting company.');
+        setError(response.message || `Error deleting ${recordType.toLowerCase()}.`);
       }
     } catch (err) {
-      setError('Error deleting company. Please try again.');
+      setError(`Error deleting ${recordType.toLowerCase()}. Please try again.`);
     } finally {
       setLoading(false);
     }
   };
 
   const handleApproved = async () => {
-    if (!window.confirm('Are you sure you want to Approved this company?'))
+    if (!window.confirm(`Are you sure you want to approve this ${recordType.toLowerCase()}?`))
       return;
 
     setLoading(true);
@@ -116,7 +116,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
     <div className="modal-overlay" onClick={onClose}>
       <div className="detail-modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="detail-modal-header">
-          <h2>Company Details</h2>
+          <h2>{recordType} Details</h2>
           <button className="close-button" onClick={onClose}>×</button>
         </div>
 
@@ -128,13 +128,13 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="companyName">Company Name</label>
+                <label htmlFor="companyName">{recordType} Name</label>
                 <input
                   type="text" id="companyName" name="companyName"
                   value={formData.companyName || ''}
                   onChange={handleInputChange}
                   disabled={!canEdit || loading}
-                  placeholder="Enter company name"
+                  placeholder={`Enter ${recordType} name`}
                 />
               </div>
               <div className="form-group">
@@ -151,7 +151,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
 
             <div className="form-row">
               <div className="form-group full-width">
-                <label htmlFor="link">Company Link</label>
+                <label htmlFor="link">{recordType} Link</label>
                 <input
                   type="text" id="link" name="link"
                   value={formData.link || ''}
@@ -209,7 +209,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
                   value={formData.painPoints || ''}
                   onChange={handleInputChange}
                   disabled={!canEdit || loading}
-                  placeholder="Describe the company's pain points"
+                  placeholder="Describe the client's pain points"
                   rows="3"
                 />
               </div>
@@ -251,7 +251,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
                   value={formData.bestPitchAngle || ''}
                   onChange={handleInputChange}
                   disabled={!canEdit || loading}
-                  placeholder="Your best pitch angle for this company"
+                  placeholder="Your best pitch angle for this client"
                   rows="3"
                 />
               </div>
@@ -323,7 +323,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
                   {loading ? 'Saving...' : 'Save Changes'}
                 </button>
                 <button type="button" className="button button-danger" onClick={handleDelete} disabled={loading}>
-                  Delete Company
+                  Delete Client
                 </button>
               </>
             )}

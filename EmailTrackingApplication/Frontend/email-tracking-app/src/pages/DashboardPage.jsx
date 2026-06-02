@@ -10,7 +10,7 @@ import { authUtils } from '../services/authUtils';
 export const DashboardPage = ({ user, onLogout }) => {
   const navigate = useNavigate();
   const [companies, setCompanies] = useState([]);
-  const [selectedTab, setSelectedTab] = useState('Company');
+  const [selectedTab, setSelectedTab] = useState('Client');
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -105,11 +105,11 @@ export const DashboardPage = ({ user, onLogout }) => {
         <div className="dashboard-toolbar">
           <div className="toolbar-left">
             <div className="tabs">
-              <button className={`tab ${selectedTab === 'Company' ? 'active' : ''}`} onClick={() => { setSelectedTab('Company'); setSearchQuery(''); }}>
-                Company
-              </button>
               <button className={`tab ${selectedTab === 'Client' ? 'active' : ''}`} onClick={() => { setSelectedTab('Client'); setSearchQuery(''); }}>
                 Client
+              </button>
+              <button className={`tab ${selectedTab === 'Agent' ? 'active' : ''}`} onClick={() => { setSelectedTab('Agent'); setSearchQuery(''); }}>
+                Agent
               </button>
             </div>
             <div className="search-box">
@@ -136,7 +136,7 @@ export const DashboardPage = ({ user, onLogout }) => {
         {loading ? (
           <div className="loading-state">
             <div className="spinner"></div>
-            <p>Loading companies...</p>
+            <p>Loading {selectedTab.toLowerCase()}s...</p>
           </div>
         ) : (
           <CompanyTable
