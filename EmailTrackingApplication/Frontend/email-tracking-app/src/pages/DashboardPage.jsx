@@ -11,6 +11,7 @@ export const DashboardPage = ({ user, onLogout }) => {
   const navigate = useNavigate();
   const [companies, setCompanies] = useState([]);
   const [selectedTab, setSelectedTab] = useState('Company');
+  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { toasts, showToast, removeToast } = useToast();
@@ -64,6 +65,25 @@ export const DashboardPage = ({ user, onLogout }) => {
     fetchCompanies();
   };
 
+  const filteredCompanies = companies.filter((company) => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return true;
+
+    const values = [
+      company.companyName,
+      company.region,
+      company.link,
+      company.emails,
+      company.username,
+      company.status,
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase();
+
+    return values.includes(query);
+  });
+
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
@@ -85,14 +105,25 @@ export const DashboardPage = ({ user, onLogout }) => {
         <div className="dashboard-toolbar">
           <div className="toolbar-left">
             <div className="tabs">
-              <button className={`tab ${selectedTab === 'Company' ? 'active' : ''}`} onClick={() => { setSelectedTab('Company'); }}>
+              <button className={`tab ${selectedTab === 'Company' ? 'active' : ''}`} onClick={() => { setSelectedTab('Company'); setSearchQuery(''); }}>
                 Company
               </button>
-              <button className={`tab ${selectedTab === 'Client' ? 'active' : ''}`} onClick={() => { setSelectedTab('Client'); }}>
+              <button className={`tab ${selectedTab === 'Client' ? 'active' : ''}`} onClick={() => { setSelectedTab('Client'); setSearchQuery(''); }}>
                 Client
               </button>
             </div>
-            <span className="company-count">{companies.length} record(s)</span>
+            <div className="search-box">
+              <input
+                type="text"
+                className="search-input"
+                placeholder={`Search ${selectedTab}s...`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <span className="company-count">
+              Showing {filteredCompanies.length} of {companies.length} record(s)
+            </span>
           </div>
           <button
             className="add-company-button"
@@ -109,7 +140,7 @@ export const DashboardPage = ({ user, onLogout }) => {
           </div>
         ) : (
           <CompanyTable
-            companies={companies}
+            companies={filteredCompanies}
             userId={user?.userId}
             isDirector={user?.isDirector}
             onCompanyUpdated={handleCompanyUpdated}
