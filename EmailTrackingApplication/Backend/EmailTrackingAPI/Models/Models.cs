@@ -55,6 +55,7 @@ namespace EmailTrackingAPI.Models
         public string? Region { get; set; }
         public string? Link { get; set; }
         public string? Emails { get; set; }
+        public string? RecordType { get; set; }
     }
 
     public class UpdateCompanyRequest
@@ -88,6 +89,7 @@ namespace EmailTrackingAPI.Models
     public class DuplicateCheckRequest
     {
         public string? CompanyName { get; set; }
+        public string? RecordType { get; set; }
     }
 
     public class DuplicateCheckResponse

@@ -35,10 +35,10 @@ export const DashboardPage = ({ user, onLogout }) => {
       if (response.success) {
         setCompanies(response.data);
       } else {
-        showToast('Error loading companies.', 'error');
+        showToast(`Error loading ${selectedTab.toLowerCase()}s.`, 'error');
       }
     } catch (err) {
-      showToast('Error loading companies.', 'error');
+      showToast(`Error loading ${selectedTab.toLowerCase()}s.`, 'error');
     } finally {
       setLoading(false);
     }
@@ -53,7 +53,7 @@ export const DashboardPage = ({ user, onLogout }) => {
   const handleAddCompany = (newCompany) => {
     if (!newCompany || newCompany.recordType !== selectedTab) return;
     setCompanies((prev) => [...prev, newCompany]);
-    showToast('Company added successfully!', 'success');
+    showToast(`${selectedTab} added successfully!`, 'success');
   };
 
   const handleCompanyUpdated = () => {
@@ -115,6 +115,7 @@ export const DashboardPage = ({ user, onLogout }) => {
             onCompanyUpdated={handleCompanyUpdated}
             onCompanyDeleted={handleCompanyDeleted}
             onShowToast={showToast}
+            recordType={selectedTab}
           />
         )}
       </main>
@@ -124,6 +125,7 @@ export const DashboardPage = ({ user, onLogout }) => {
         onClose={() => setIsModalOpen(false)}
         userId={user?.userId}
         onCompanyAdded={handleAddCompany}
+        recordType={selectedTab}
       />
 
       <div className="toast-container">

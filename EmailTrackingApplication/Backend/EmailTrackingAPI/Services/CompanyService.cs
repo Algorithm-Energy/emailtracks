@@ -14,7 +14,7 @@ namespace EmailTrackingAPI.Services
         Task<Company?> AddCompany(AddCompanyRequest request, int userId);
         Task<bool> UpdateCompany(int companyId, UpdateCompanyRequest request, int userId, bool isDirector);
         Task<bool> DeleteCompany(int companyId, int userId, bool isDirector);
-        Task<DuplicateCheckResponse> CheckDuplicateCompany(string companyName, int userId);
+        Task<DuplicateCheckResponse> CheckDuplicateCompany(string companyName, int userId, string recordType);
         Task<bool> UpdateStatus(int companyId, UpdateStatusRequest request, int userId, bool isDirector);
         Task<bool> MarkAsPending(int companyId, int userId, bool isDirector);
     }
@@ -101,7 +101,8 @@ namespace EmailTrackingAPI.Services
                 Status      = "Pending",          // ← default Pending
                 UserId      = userId,
                 CreatedAt   = DateTime.UtcNow,
-                UpdatedAt   = DateTime.UtcNow
+                UpdatedAt   = DateTime.UtcNow,
+                RecordType   = request.RecordType
             };
 
             _context.Companies.Add(company);
@@ -159,15 +160,15 @@ namespace EmailTrackingAPI.Services
             return true;
         }
 
-        public async Task<DuplicateCheckResponse> CheckDuplicateCompany(string companyName, int userId)
+        public async Task<DuplicateCheckResponse> CheckDuplicateCompany(string companyName, int userId, string recordType)
         {
             var exists = await _context.Companies
-                .AnyAsync(c => c.CompanyName!.ToLower() == (companyName ?? string.Empty).ToLower() && c.UserId == userId);
+                .AnyAsync(c => c.CompanyName!.ToLower() == (companyName ?? string.Empty).ToLower() && c.RecordType == recordType);
 
             return new DuplicateCheckResponse
             {
                 Exists  = exists,
-                Message = exists ? "Company already exists for this user" : "Company name is available"
+                Message = exists ?  recordType + " already exists for this user" : recordType + " name is available"
             };
         }
 

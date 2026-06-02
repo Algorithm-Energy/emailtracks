@@ -64,14 +64,14 @@ export const companiesAPI = {
     return response.json();
   },
 
-  checkDuplicate: async (userId, companyName) => {
+  checkDuplicate: async (userId, companyName, recordType) => {
     const response = await fetch(`${API_BASE_URL}/companies/check-duplicate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'userId': userId,
       },
-      body: JSON.stringify({ companyName }),
+      body: JSON.stringify({ companyName, recordType }),
     });
     return response.json();
   },

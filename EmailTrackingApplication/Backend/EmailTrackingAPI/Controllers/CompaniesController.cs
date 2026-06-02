@@ -180,7 +180,7 @@ namespace EmailTrackingAPI.Controllers
             if (string.IsNullOrWhiteSpace(request.CompanyName))
                 return BadRequest(new ApiResponse<DuplicateCheckResponse> { Success = false, Message = "Company name is required" });
 
-            var result = await _companyService.CheckDuplicateCompany(request.CompanyName, userId);
+            var result = await _companyService.CheckDuplicateCompany(request.CompanyName, userId, request.RecordType);
             return Ok(new ApiResponse<DuplicateCheckResponse>
             {
                 Success = true,

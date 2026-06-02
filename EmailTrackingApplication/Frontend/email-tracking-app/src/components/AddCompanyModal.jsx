@@ -3,7 +3,7 @@ import './AddCompanyModal.css';
 import { companiesAPI } from '../services/api';
 import { authUtils } from '../services/authUtils';
 
-export const AddCompanyModal = ({ isOpen, onClose, userId, onCompanyAdded }) => {
+export const AddCompanyModal = ({ isOpen, onClose, userId, onCompanyAdded, recordType= 'Company' }) => {
   const currentUser = authUtils.getUser();
   const [formData, setFormData] = useState({
     username: currentUser?.username || '',
@@ -93,7 +93,7 @@ export const AddCompanyModal = ({ isOpen, onClose, userId, onCompanyAdded }) => 
 
     try {
       // Check for duplicate
-      const duplicateCheck = await companiesAPI.checkDuplicate(userId, formData.companyName);
+      const duplicateCheck = await companiesAPI.checkDuplicate(userId, formData.companyName, recordType);
       if (duplicateCheck.data.exists) {
         setError('This company already exists.');
         setLoading(false);
@@ -107,6 +107,7 @@ export const AddCompanyModal = ({ isOpen, onClose, userId, onCompanyAdded }) => 
         region: formData.region,
         link: formData.link || null,
         emails: formData.emails.join(', '),
+        recordType: recordType,
       });
 
       if (response.success) {

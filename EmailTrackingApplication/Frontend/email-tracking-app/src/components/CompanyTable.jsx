@@ -9,6 +9,7 @@ export const CompanyTable = ({
   onCompanyUpdated,
   onCompanyDeleted,
   onShowToast,
+  recordType = 'Company',
 }) => {
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false); console.log('Rendering CompanyTable with companies:', companies);
@@ -148,6 +149,7 @@ export const CompanyTable = ({
         isDirector={isDirector}
         onCompanyUpdated={handleCompanyUpdated}
         onShowToast={onShowToast}
+        recordType={recordType}
       />
     </>
   );

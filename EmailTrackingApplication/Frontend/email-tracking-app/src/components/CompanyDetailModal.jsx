@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './CompanyDetailModal.css';
 import { companiesAPI } from '../services/api';
 
-export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirector, onCompanyUpdated, onShowToast }) => {
+export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirector, onCompanyUpdated, onShowToast, recordType= 'Company' }) => {
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -28,7 +28,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
     setError('');
 
     if (!formData.companyName?.trim()) {
-      setError('Company Name is required.');
+      setError(`${recordType} Name is required.`);
       return;
     }
 
@@ -99,13 +99,13 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
       const response = await companiesAPI.approveCompany(company.id, userId, isDirector, status);
       if (response.success) {
         onCompanyUpdated();
-        onShowToast('Company deleted successfully.', 'success');
+        onShowToast(`${recordType} approved successfully.`, 'success');
         onClose();
       } else {
-        setError(response.message || 'Error deleting company.');
+        setError(response.message || `Error approving ${recordType.toLowerCase()}.`);
       }
     } catch (err) {
-      setError('Error deleting company. Please try again.');
+      setError(`Error approving ${recordType.toLowerCase()}. Please try again.`);
     } finally {
       setLoading(false);
     }
