@@ -12,7 +12,7 @@ export const CompanyTable = ({
   recordType = 'Client',
 }) => {
   const [selectedCompany, setSelectedCompany] = useState(null);
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false); console.log('Rendering CompanyTable with companies:', companies);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const parseEmails = (emailString) => {
     if (!emailString) return [];
     return emailString.split(/[,;]/).map((e) => e.trim()).filter((e) => e);

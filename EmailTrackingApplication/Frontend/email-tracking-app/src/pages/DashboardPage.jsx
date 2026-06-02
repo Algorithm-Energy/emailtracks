@@ -84,6 +84,15 @@ export const DashboardPage = ({ user, onLogout }) => {
     return values.includes(query);
   });
 
+  const modalControl = () => {
+    const userCompanyCount = companies.filter(cc => cc.userId === user.userId && cc.isApproved == 0).length;
+    if (!user.isDirector && userCompanyCount >= 3) {
+      showToast(`You already have 3 ${selectedTab.toLowerCase()} records under review.`,'error');
+      return;
+    }
+    setIsModalOpen(true);
+  }
+
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
@@ -127,7 +136,7 @@ export const DashboardPage = ({ user, onLogout }) => {
           </div>
           <button
             className="add-company-button"
-            onClick={() => setIsModalOpen(true)}
+            onClick={modalControl}
           >
             + Add {selectedTab}
           </button>
