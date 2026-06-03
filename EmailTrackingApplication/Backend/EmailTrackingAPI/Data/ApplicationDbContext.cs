@@ -71,6 +71,7 @@ namespace EmailTrackingAPI.Data
             modelBuilder.Entity<Prospect>().HasIndex(p => p.Status);
 
             // ActivityLog configuration
+            modelBuilder.Entity<ActivityLog>().ToTable("ActivityLog");
             modelBuilder.Entity<ActivityLog>().HasKey(a => a.Id);
             modelBuilder.Entity<ActivityLog>().Ignore(a => a.Username);
             modelBuilder.Entity<ActivityLog>()
