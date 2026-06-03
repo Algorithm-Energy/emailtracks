@@ -62,10 +62,10 @@ namespace EmailTrackingAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<ApiResponse<string>>> UpdateProspect(int id, [FromBody] UpdateProspectRequest request)
         {
-            if (!TryGetUserId(out _))
+            if (!TryGetUserId(out int userId))
                 return Unauthorized(new ApiResponse<string> { Success = false, Message = "User not authenticated" });
 
-            var success = await _prospectService.UpdateProspect(id, request);
+            var success = await _prospectService.UpdateProspect(id, request, userId);
             if (!success)
                 return BadRequest(new ApiResponse<string> { Success = false, Message = "Failed to update prospect" });
 
