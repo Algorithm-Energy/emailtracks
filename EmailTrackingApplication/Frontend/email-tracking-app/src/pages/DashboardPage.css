@@ -59,6 +59,30 @@
   border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.manage-users-button {
+  padding: 12px 20px;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+
+.manage-users-button:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
 .logout-button {
   padding: 12px 28px;
   background-color: rgba(255, 255, 255, 0.2);
@@ -162,6 +186,52 @@
 .tab:focus-visible {
   outline: 2px solid rgba(102, 126, 234, 0.4);
   outline-offset: 2px;
+}
+
+.tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  background-color: #f59e0b;
+  color: white;
+  line-height: 1;
+}
+
+.tab.active .tab-badge {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #764ba2;
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.export-button {
+  padding: 10px 18px;
+  background-color: white;
+  color: #555;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.export-button:hover {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+  transform: translateY(-1px);
 }
 
 .dashboard-toolbar h2 {

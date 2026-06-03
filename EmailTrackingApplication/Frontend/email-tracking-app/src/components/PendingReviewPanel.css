@@ -1,0 +1,93 @@
+.pending-review-panel {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border: 1.5px solid #fbbf24;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.prp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.prp-header:hover {
+  background-color: rgba(251, 191, 36, 0.1);
+}
+
+.prp-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #92400e;
+}
+
+.prp-icon { font-size: 16px; }
+
+.prp-toggle {
+  font-size: 12px;
+  color: #b45309;
+  font-weight: 600;
+}
+
+.prp-list {
+  border-top: 1px solid #fde68a;
+}
+
+.prp-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  border-bottom: 1px solid #fef3c7;
+}
+
+.prp-row:last-child { border-bottom: none; }
+
+.prp-row:hover { background-color: rgba(251, 191, 36, 0.12); }
+
+.prp-type-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 10px;
+  letter-spacing: 0.4px;
+  flex-shrink: 0;
+}
+
+.prp-client { background-color: #dbeafe; color: #1e40af; }
+.prp-agent  { background-color: #d1fae5; color: #065f46; }
+
+.prp-name {
+  flex: 1;
+  font-weight: 600;
+  font-size: 14px;
+  color: #1f2937;
+}
+
+.prp-meta {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.prp-time {
+  font-size: 12px;
+  color: #9ca3af;
+  min-width: 50px;
+  text-align: right;
+}
+
+.prp-action {
+  font-size: 12px;
+  font-weight: 600;
+  color: #b45309;
+  flex-shrink: 0;
+}
