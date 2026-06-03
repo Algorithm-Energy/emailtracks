@@ -17,6 +17,7 @@ namespace EmailTrackingAPI.Services
         Task<DuplicateCheckResponse> CheckDuplicateCompany(string companyName, int userId, string recordType);
         Task<bool> UpdateStatus(int companyId, UpdateStatusRequest request, int userId, bool isDirector);
         Task<bool> MarkAsPending(int companyId, int userId, bool isDirector);
+        Task<bool> FlagForReview(int companyId, int userId, bool isDirector);
     }
 
     public class CompanyService : ICompanyService
@@ -64,6 +65,7 @@ namespace EmailTrackingAPI.Services
             UpdatedAt = c.UpdatedAt,
             LastEmailSentAt = c.LastEmailSentAt,
             isApproved = c.isApproved,
+            IsReadyForReview = c.IsReadyForReview,
             RecordType = c.RecordType
         })
     .ToListAsync();
@@ -182,7 +184,9 @@ namespace EmailTrackingAPI.Services
             if (!isDirector && company.UserId != userId)
                 return false;
             company.UpdatedAt = DateTime.UtcNow;
-            company.isApproved = request.Status ; // ← only set isApproved to true if status is Approved, otherwise keep existing value
+            company.isApproved = request.Status; // ← director approval toggle
+            if (request.Status == 1)
+                company.IsReadyForReview = false; // clear flag once director acts
 
             _context.Companies.Update(company);
             await _context.SaveChangesAsync();
@@ -203,6 +207,28 @@ namespace EmailTrackingAPI.Services
             company.Status          = "Pending";
             company.LastEmailSentAt = DateTime.UtcNow;
             company.UpdatedAt       = DateTime.UtcNow;
+
+            _context.Companies.Update(company);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> FlagForReview(int companyId, int userId, bool isDirector)
+        {
+            var company = await _context.Companies.FindAsync(companyId);
+
+            if (company == null)
+                return false;
+
+            if (!isDirector && company.UserId != userId)
+                return false;
+
+            if (company.isApproved == 1)
+                return false; // already approved, flagging makes no sense
+
+            company.IsReadyForReview = !company.IsReadyForReview; // toggle
+            company.UpdatedAt = DateTime.UtcNow;
 
             _context.Companies.Update(company);
             await _context.SaveChangesAsync();

@@ -23,10 +23,16 @@ export const CompanyTable = ({
     return 'status-' + status.toLowerCase().replace(/\s+/g, '-');
   };
 
-  const getApprovalClass = (status) => {
-    if (!status) return 'status-unapproved';
-    const adminStatus = status === 1 ? 'approved' : 'unapproved';
-    return 'status-' + adminStatus;
+  const getApprovalClass = (isApproved, isReadyForReview) => {
+    if (isApproved === 1) return 'status-approved';
+    if (isReadyForReview) return 'status-ready-for-review';
+    return 'status-unapproved';
+  };
+
+  const getApprovalLabel = (isApproved, isReadyForReview) => {
+    if (isApproved === 1) return 'Approved';
+    if (isReadyForReview) return 'Ready for Review';
+    return 'Not Submitted';
   };
   const handleRowClick = (company) => {
     setSelectedCompany(company);
@@ -127,9 +133,8 @@ export const CompanyTable = ({
                       <td className="owner-cell">{company.username || '—'}</td>
                       
                       <td className="status-cell">
-                        <span className={`status-badge ${getApprovalClass(company.isApproved)}`}>
-                          
-                          {getApprovalClass(company.isApproved) === 'status-approved' ? 'Approved' : 'Under Review'}
+                        <span className={`status-badge ${getApprovalClass(company.isApproved, company.isReadyForReview)}`}>
+                          {getApprovalLabel(company.isApproved, company.isReadyForReview)}
                         </span>
                       </td>
                     </tr>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './CompanyDetailModal.css';
 import { companiesAPI } from '../services/api';
+import { authUtils } from '../services/authUtils';
 
 export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirector, onCompanyUpdated, onShowToast, recordType= 'Client' }) => {
   const [formData, setFormData] = useState({});
@@ -110,6 +111,25 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
       setLoading(false);
     }
   };
+  const handleFlagForReview = async () => {
+    setLoading(true);
+    try {
+      const response = await companiesAPI.flagForReview(company.id, userId);
+      if (response.success) {
+        onCompanyUpdated();
+        const action = formData.isReadyForReview ? 'flag reverted.' : 'flagged for admin review.';
+        onShowToast(`${recordType} ${action}`, 'success');
+        onClose();
+      } else {
+        setError(response.message || `Error flagging ${recordType.toLowerCase()} for review.`);
+      }
+    } catch (err) {
+      setError(`Error flagging ${recordType.toLowerCase()} for review. Please try again.`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!isOpen || !company) return null;
 
   return (
@@ -313,17 +333,25 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
             </button>
             {canEdit && (
               <>
-              {isDirector && (
-                <button type="button" className="button button-success" onClick={handleApproved} disabled={loading}>
-                  {formData.isApproved ===1 ?'Unapprove' : 'Approve'}
-                </button>
-               )
-              }
+                {isDirector && (
+                  <button type="button" className="button button-success" onClick={handleApproved} disabled={loading}>
+                    {formData.isApproved === 1 ? 'Unapprove' : 'Approve'}
+                  </button>
+                )}
+                {!isDirector && formData.isApproved !== 1 && (
+                  formData.isReadyForReview
+                    ? <button type="button" className="button button-flag-revert" onClick={handleFlagForReview} disabled={loading}>
+                        ↩ Revert Flag
+                      </button>
+                    : <button type="button" className="button button-flag" onClick={handleFlagForReview} disabled={loading}>
+                        🚩 Flag for Review
+                      </button>
+                )}
                 <button type="submit" className="button button-primary" disabled={loading}>
                   {loading ? 'Saving...' : 'Save Changes'}
                 </button>
                 <button type="button" className="button button-danger" onClick={handleDelete} disabled={loading}>
-                  Delete Client
+                  Delete {recordType}
                 </button>
               </>
             )}

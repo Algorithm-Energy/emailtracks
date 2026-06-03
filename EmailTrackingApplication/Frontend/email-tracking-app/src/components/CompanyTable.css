@@ -251,6 +251,12 @@
   color: #b71c1c;
 }
 
+.status-badge.status-ready-for-review {
+  background-color: #fff8e1;
+  color: #e65100;
+  border: 1px solid #ffcc02;
+}
+
 /* Owner */
 .owner-cell {
   text-align: center;
