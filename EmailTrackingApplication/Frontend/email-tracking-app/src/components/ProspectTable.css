@@ -1,3 +1,6 @@
+.sortable-th { cursor: pointer; user-select: none; }
+.sortable-th:hover { background-color: #eceef5; }
+
 /* Pipeline status badges */
 .ps-first-meeting    { background-color: #e3f2fd; color: #1565c0; }
 .ps-demo             { background-color: #ede7f6; color: #4527a0; }

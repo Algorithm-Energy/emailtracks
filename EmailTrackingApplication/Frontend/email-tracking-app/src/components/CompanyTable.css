@@ -31,6 +31,14 @@
 .company-table colgroup col:nth-child(5) { width: 15%; }  /* Owner (director only) */
 .company-table colgroup col:nth-child(6) { width: 20%; }  /* Admin Approval */
 
+.sortable-th {
+  cursor: pointer;
+  user-select: none;
+}
+.sortable-th:hover {
+  background-color: #eceef5;
+}
+
 .company-table thead {
   background-color: #f5f7fa;
   border-bottom: 2px solid #e0e0e0;
