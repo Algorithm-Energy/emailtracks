@@ -2,6 +2,20 @@ import React, { useState } from 'react';
 import './CompanyTable.css';
 import { CompanyDetailModal } from './CompanyDetailModal';
 
+const SORT_KEYS = {
+  'Client Name': 'companyName',
+  'Region': 'region',
+  'Status': 'status',
+  'Prospector': 'username',
+  'Admin Approval': 'isApproved',
+  'Date Added': 'createdAt',
+};
+
+const formatDate = (d) => {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
+};
+
 export const CompanyTable = ({
   companies,
   userId,
@@ -13,6 +27,23 @@ export const CompanyTable = ({
 }) => {
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [sortCol, setSortCol] = useState(null);
+  const [sortDir, setSortDir] = useState('asc');
+
+  const handleSort = (col) => {
+    if (sortCol === col) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    else { setSortCol(col); setSortDir('asc'); }
+  };
+
+  const sortedCompanies = [...companies].sort((a, b) => {
+    if (!sortCol) return 0;
+    const key = SORT_KEYS[sortCol];
+    const av = (a[key] ?? '').toString().toLowerCase();
+    const bv = (b[key] ?? '').toString().toLowerCase();
+    return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+  });
+
+  const arrow = (col) => sortCol === col ? (sortDir === 'asc' ? ' ↑' : ' ↓') : '';
   const parseEmails = (emailString) => {
     if (!emailString) return [];
     return emailString.split(/[,;]/).map((e) => e.trim()).filter((e) => e);
@@ -66,19 +97,21 @@ export const CompanyTable = ({
                 <col />
                 <col />
                 <col />
+                <col style={{ width: '110px' }} />
               </colgroup>
               <thead>
                 <tr>
-                  <th>Client Name</th>
-                  <th>Region</th>
+                  {['Client Name','Region'].map(col => (
+                    <th key={col} className="sortable-th" onClick={() => handleSort(col)}>{col}{arrow(col)}</th>
+                  ))}
                   <th className="col-contacts">Contacts</th>
-                  <th className="col-status">Status</th>
-                  <th className="col-owner">Prospector</th>
-                  <th className="col-owner">Admin Approval</th>
+                  {['Status','Prospector','Admin Approval','Date Added'].map(col => (
+                    <th key={col} className={`col-status sortable-th`} onClick={() => handleSort(col)}>{col}{arrow(col)}</th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
-                {companies.map((company) => {
+                {sortedCompanies.map((company) => {
                   const emails = parseEmails(company.emails);
                   return (
                     <tr
@@ -136,6 +169,10 @@ export const CompanyTable = ({
                         <span className={`status-badge ${getApprovalClass(company.isApproved, company.isReadyForReview)}`}>
                           {getApprovalLabel(company.isApproved, company.isReadyForReview)}
                         </span>
+                      </td>
+
+                      <td className="owner-cell" style={{ fontSize: 12, color: '#888', whiteSpace: 'nowrap' }}>
+                        {formatDate(company.createdAt)}
                       </td>
                     </tr>
                   );

@@ -19,8 +19,35 @@ const formatDate = (date) => {
 
 const isOverdue = (date) => date && new Date(date) < new Date();
 
+const PROSPECT_SORT_KEYS = {
+  'Prospect':        'prospectName',
+  'Source':          'source',
+  'Pipeline Status': 'status',
+  'Assigned To':     'assignedToUsername',
+  'Next Action':     'nextActionDate',
+  'Created By':      'createdByUsername',
+  'Date Added':      'createdAt',
+};
+
 export const ProspectTable = ({ prospects, userId, isDirector, users, onRefresh, onShowToast }) => {
   const [selected, setSelected] = useState(null);
+  const [sortCol, setSortCol] = useState(null);
+  const [sortDir, setSortDir] = useState('asc');
+
+  const handleSort = (col) => {
+    if (sortCol === col) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    else { setSortCol(col); setSortDir('asc'); }
+  };
+
+  const sortedProspects = [...prospects].sort((a, b) => {
+    if (!sortCol) return 0;
+    const key = PROSPECT_SORT_KEYS[sortCol];
+    const av = (a[key] ?? '').toString().toLowerCase();
+    const bv = (b[key] ?? '').toString().toLowerCase();
+    return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+  });
+
+  const arrow = (col) => sortCol === col ? (sortDir === 'asc' ? ' ↑' : ' ↓') : '';
 
   return (
     <>
@@ -33,27 +60,26 @@ export const ProspectTable = ({ prospects, userId, isDirector, users, onRefresh,
           <div className="table-wrapper">
             <table className="company-table">
               <colgroup>
-                <col style={{ width: '18%' }} />
+                <col style={{ width: '17%' }} />
+                <col style={{ width: '12%' }} />
+                <col style={{ width: '9%' }} />
                 <col style={{ width: '14%' }} />
-                <col style={{ width: '10%' }} />
-                <col style={{ width: '18%' }} />
-                <col style={{ width: '13%' }} />
-                <col style={{ width: '13%' }} />
-                <col style={{ width: '14%' }} />
+                <col style={{ width: '11%' }} />
+                <col style={{ width: '11%' }} />
+                <col style={{ width: '12%' }} />
+                <col style={{ width: '100px' }} />
               </colgroup>
               <thead>
                 <tr>
-                  <th>Prospect</th>
+                  <th className="sortable-th" onClick={() => handleSort('Prospect')}>Prospect{arrow('Prospect')}</th>
                   <th>Contact Person</th>
-                  <th className="col-status">Source</th>
-                  <th className="col-status">Pipeline Status</th>
-                  <th className="col-owner">Assigned To</th>
-                  <th className="col-owner">Next Action</th>
-                  <th className="col-owner">Created By</th>
+                  {['Source','Pipeline Status','Assigned To','Next Action','Created By','Date Added'].map(col => (
+                    <th key={col} className="col-status sortable-th" onClick={() => handleSort(col)}>{col}{arrow(col)}</th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
-                {prospects.map((p) => (
+                {sortedProspects.map((p) => (
                   <tr key={p.id} className="clickable-row" onClick={() => setSelected(p)}>
                     <td className="company-name-cell">
                       <div>{p.prospectName}</div>
@@ -80,6 +106,9 @@ export const ProspectTable = ({ prospects, userId, isDirector, users, onRefresh,
                       {formatDate(p.nextActionDate)}
                     </td>
                     <td className="owner-cell">{p.createdByUsername || '—'}</td>
+                    <td className="owner-cell" style={{ fontSize: 12, color: '#888', whiteSpace: 'nowrap' }}>
+                      {formatDate(p.createdAt)}
+                    </td>
                   </tr>
                 ))}
               </tbody>
