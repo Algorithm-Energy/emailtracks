@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './CompanyTable.css';
 import { CompanyDetailModal } from './CompanyDetailModal';
 
@@ -13,6 +13,8 @@ export const CompanyTable = ({
 }) => {
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const parseEmails = (emailString) => {
     if (!emailString) return [];
     return emailString.split(/[,;]/).map((e) => e.trim()).filter((e) => e);
@@ -43,12 +45,23 @@ export const CompanyTable = ({
     handleCloseDetailModal();
   };
 
+  useEffect(() => {
+    // Reset to page 1 when the company list or rows per page changes
+    setPage(1);
+  }, [companies, rowsPerPage]);
+
+  const totalPages = Math.max(1, Math.ceil(companies.length / rowsPerPage));
+  if (page > totalPages) setPage(totalPages);
+  const startIndex = (page - 1) * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
+  const displayedCompanies = companies.slice(startIndex, endIndex);
+
   return (
     <>
       <div className="table-container">
         {companies.length === 0 ? (
           <div className="empty-state">
-            <p>No clients found. Add your first client to get started!</p>
+            <p>No {recordType.toLowerCase()}s found. Add your first {recordType.toLowerCase()} to get started!</p>
           </div>
         ) : (
           <div className="table-wrapper">
@@ -63,7 +76,7 @@ export const CompanyTable = ({
               </colgroup>
               <thead>
                 <tr>
-                  <th>Client Name</th>
+                  <th>{recordType} Name</th>
                   <th>Region</th>
                   <th className="col-contacts">Contacts</th>
                   <th className="col-status">Status</th>
@@ -72,7 +85,7 @@ export const CompanyTable = ({
                 </tr>
               </thead>
               <tbody>
-                {companies.map((company) => {
+                {displayedCompanies.map((company) => {
                   const emails = parseEmails(company.emails);
                   return (
                     <tr
@@ -139,6 +152,32 @@ export const CompanyTable = ({
             </table>
           </div>
         )}
+            {companies.length > 0 && (
+              <div className="pagination-container">
+                <div className="pagination-info">
+                  Showing {Math.min(startIndex + 1, companies.length)}-{Math.min(endIndex, companies.length)} of {companies.length}
+                </div>
+                <div className="pagination-controls">
+                  <label className="rows-label">Rows:</label>
+                  <select className="rows-select" value={rowsPerPage} onChange={(e) => setRowsPerPage(Number(e.target.value))}>
+                    <option value={5}>5</option>
+                    <option value={10}>10</option>
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                  </select>
+
+                  <button className="page-button" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1}>
+                    Prev
+                  </button>
+
+                  <span className="page-indicator">Page {page} of {totalPages}</span>
+
+                  <button className="page-button" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page >= totalPages}>
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
       </div>
 
       <CompanyDetailModal
