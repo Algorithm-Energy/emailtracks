@@ -330,3 +330,50 @@
   cursor: not-allowed;
   transform: none;
 }
+
+.button-flag {
+  background-color: #fff8e1;
+  color: #b45309;
+  border: 1.5px solid #fbbf24;
+}
+
+.button-flag:hover:not(:disabled) {
+  background-color: #fef3c7;
+  border-color: #f59e0b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.35);
+}
+
+.button-flag-revert {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  border: 1.5px solid #d1d5db;
+}
+
+.button-flag-revert:hover:not(:disabled) {
+  background-color: #e5e7eb;
+  border-color: #9ca3af;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ── Record metadata bar (Added / Last Updated) ── */
+.record-meta {
+  display: flex;
+  gap: 24px;
+  padding: 7px 28px;
+  background: #f5f3ff;
+  border-bottom: 1px solid #e4deff;
+  font-size: 12px;
+  color: #6b5fa0;
+}
+
+.record-meta-item {
+  display: flex;
+  gap: 5px;
+}
+
+.record-meta-item strong {
+  color: #3b2f6b;
+  font-weight: 600;
+}

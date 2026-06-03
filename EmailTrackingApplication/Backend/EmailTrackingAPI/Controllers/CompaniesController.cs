@@ -205,6 +205,48 @@ namespace EmailTrackingAPI.Controllers
             return Ok(new ApiResponse<string> { Success = true, Message = "Status updated successfully" });
         }
 
+        [HttpGet("review-counts")]
+        public async Task<ActionResult<ApiResponse<Dictionary<string, int>>>> GetReviewCounts()
+        {
+            if (!Request.Headers.TryGetValue("userId", out var userIdHeader) ||
+                !int.TryParse(userIdHeader.FirstOrDefault(), out int userId) || userId == 0)
+                return Unauthorized(new ApiResponse<Dictionary<string, int>> { Success = false, Message = "User not authenticated" });
+
+            var counts = await _companyService.GetReviewCounts();
+            return Ok(new ApiResponse<Dictionary<string, int>> { Success = true, Data = counts });
+        }
+
+        [HttpGet("pending-review")]
+        public async Task<ActionResult<ApiResponse<List<Company>>>> GetPendingReview()
+        {
+            if (!Request.Headers.TryGetValue("userId", out var userIdHeader) ||
+                !int.TryParse(userIdHeader.FirstOrDefault(), out int userId) || userId == 0)
+                return Unauthorized(new ApiResponse<List<Company>> { Success = false, Message = "User not authenticated" });
+
+            bool.TryParse(Request.Headers["isDirector"].FirstOrDefault(), out bool isDirector);
+            if (!isDirector)
+                return StatusCode(403, new ApiResponse<List<Company>> { Success = false, Message = "Admin only" });
+
+            var records = await _companyService.GetPendingReview();
+            return Ok(new ApiResponse<List<Company>> { Success = true, Data = records });
+        }
+
+        [HttpPut("{id}/flag-for-review")]
+        public async Task<ActionResult<ApiResponse<string>>> FlagForReview(int id)
+        {
+            if (!Request.Headers.TryGetValue("userId", out var userIdHeader) ||
+                !int.TryParse(userIdHeader.FirstOrDefault(), out int userId) || userId == 0)
+                return Unauthorized(new ApiResponse<string> { Success = false, Message = "User not authenticated" });
+
+            bool.TryParse(Request.Headers["isDirector"].FirstOrDefault(), out bool isDirector);
+
+            var success = await _companyService.FlagForReview(id, userId, isDirector);
+            if (!success)
+                return BadRequest(new ApiResponse<string> { Success = false, Message = "Failed to flag for review" });
+
+            return Ok(new ApiResponse<string> { Success = true, Message = "Flagged for director review successfully" });
+        }
+
         [HttpPut("{id}/mark-as-pending")]
         public async Task<ActionResult<ApiResponse<string>>> MarkAsPending(int id)
         {

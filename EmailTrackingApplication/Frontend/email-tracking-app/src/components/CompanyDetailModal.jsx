@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './CompanyDetailModal.css';
 import { companiesAPI } from '../services/api';
+import { authUtils } from '../services/authUtils';
+import { ActivityTimeline } from './ActivityTimeline';
 
 export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirector, onCompanyUpdated, onShowToast, recordType= 'Client' }) => {
   const [formData, setFormData] = useState({});
@@ -110,7 +112,31 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
       setLoading(false);
     }
   };
+  const handleFlagForReview = async () => {
+    setLoading(true);
+    try {
+      const response = await companiesAPI.flagForReview(company.id, userId);
+      if (response.success) {
+        onCompanyUpdated();
+        const action = formData.isReadyForReview ? 'flag reverted.' : 'flagged for admin review.';
+        onShowToast(`${recordType} ${action}`, 'success');
+        onClose();
+      } else {
+        setError(response.message || `Error flagging ${recordType.toLowerCase()} for review.`);
+      }
+    } catch (err) {
+      setError(`Error flagging ${recordType.toLowerCase()} for review. Please try again.`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!isOpen || !company) return null;
+
+  const fmtDt = (d) => {
+    if (!d) return '—';
+    return new Date(d).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+  };
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -118,6 +144,12 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
         <div className="detail-modal-header">
           <h2>{recordType} Details</h2>
           <button className="close-button" onClick={onClose}>×</button>
+        </div>
+
+        <div className="record-meta">
+          <span className="record-meta-item">Added: <strong>{fmtDt(company.createdAt)}</strong></span>
+          <span className="record-meta-item">Last updated: <strong>{fmtDt(company.updatedAt)}</strong></span>
+          {company.username && <span className="record-meta-item">Prospector: <strong>{company.username}</strong></span>}
         </div>
 
         <form onSubmit={handleSave} className="detail-modal-form">
@@ -304,6 +336,12 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
             </div>
           </div>
 
+          {/* ── Activity History ── */}
+          <div className="form-section">
+            <h3>Activity History</h3>
+            <ActivityTimeline entityType="Company" entityId={company?.id} userId={userId} />
+          </div>
+
           {error && <div className="error-message">{error}</div>}
 
           {/* ── Action Buttons ── */}
@@ -313,17 +351,25 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
             </button>
             {canEdit && (
               <>
-              {isDirector && (
-                <button type="button" className="button button-success" onClick={handleApproved} disabled={loading}>
-                  {formData.isApproved ===1 ?'Unapprove' : 'Approve'}
-                </button>
-               )
-              }
+                {isDirector && (
+                  <button type="button" className="button button-success" onClick={handleApproved} disabled={loading}>
+                    {formData.isApproved === 1 ? 'Unapprove' : 'Approve'}
+                  </button>
+                )}
+                {!isDirector && formData.isApproved !== 1 && (
+                  formData.isReadyForReview
+                    ? <button type="button" className="button button-flag-revert" onClick={handleFlagForReview} disabled={loading}>
+                        ↩ Revert Flag
+                      </button>
+                    : <button type="button" className="button button-flag" onClick={handleFlagForReview} disabled={loading}>
+                        🚩 Flag for Review
+                      </button>
+                )}
                 <button type="submit" className="button button-primary" disabled={loading}>
                   {loading ? 'Saving...' : 'Save Changes'}
                 </button>
                 <button type="button" className="button button-danger" onClick={handleDelete} disabled={loading}>
-                  Delete Client
+                  Delete {recordType}
                 </button>
               </>
             )}

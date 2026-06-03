@@ -25,6 +25,9 @@ bld/
 [Ll]og/
 [Ll]ogs/
 
+# Frontend build output (copied in during deployment, not source)
+wwwroot/
+
 # Visual Studio
 .vs/
 .vscode/
