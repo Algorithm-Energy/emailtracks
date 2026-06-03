@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ProspectTable } from './ProspectTable';
 import { AddProspectModal } from './AddProspectModal';
 import { prospectsAPI } from '../services/api';
+import { exportToCSV } from '../services/csvExport';
 
 export const ProspectsSection = ({ user, onShowToast }) => {
   const [prospects, setProspects] = useState([]);
@@ -33,6 +34,21 @@ export const ProspectsSection = ({ user, onShowToast }) => {
       const response = await prospectsAPI.getUsers(user.userId);
       if (response.success) setUsers(response.data);
     } catch {}
+  };
+
+  const handleExportCSV = () => {
+    exportToCSV(
+      ['Prospect', 'Type', 'Contact Person', 'Email', 'Phone', 'Source', 'Referred By', 'Status', 'Assigned To', 'Next Action', 'Next Action Date', 'Created By', 'Date Added', 'Last Updated'],
+      filteredProspects.map(p => [
+        p.prospectName, p.prospectType, p.contactPerson, p.contactEmail, p.contactPhone,
+        p.source, p.referredBy, p.status, p.assignedToUsername, p.nextAction,
+        p.nextActionDate ? new Date(p.nextActionDate).toLocaleDateString() : '',
+        p.createdByUsername,
+        p.createdAt ? new Date(p.createdAt).toLocaleDateString() : '',
+        p.updatedAt ? new Date(p.updatedAt).toLocaleDateString() : '',
+      ]),
+      'Prospects_export'
+    );
   };
 
   const handleProspectAdded = (newProspect) => {
@@ -68,9 +84,10 @@ export const ProspectsSection = ({ user, onShowToast }) => {
             Showing {filteredProspects.length} of {prospects.length} record(s)
           </span>
         </div>
-        <button className="add-company-button" onClick={() => setIsModalOpen(true)}>
-          + Add Prospect
-        </button>
+        <div className="toolbar-actions">
+          <button className="export-button" onClick={handleExportCSV}>↓ Export CSV</button>
+          <button className="add-company-button" onClick={() => setIsModalOpen(true)}>+ Add Prospect</button>
+        </div>
       </div>
 
       {loading ? (
