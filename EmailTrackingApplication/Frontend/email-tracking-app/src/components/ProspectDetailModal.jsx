@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './CompanyDetailModal.css';
 import { prospectsAPI } from '../services/api';
+import { ActivityTimeline } from './ActivityTimeline';
 
 const STATUSES = [
   'First Meeting',
@@ -98,12 +99,23 @@ export const ProspectDetailModal = ({
     }
   };
 
+  const fmtDt = (d) => {
+    if (!d) return '—';
+    return new Date(d).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+  };
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="detail-modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="detail-modal-header">
           <h2>Prospect Details</h2>
           <button className="close-button" onClick={onClose}>×</button>
+        </div>
+
+        <div className="record-meta">
+          <span className="record-meta-item">Added: <strong>{fmtDt(prospect.createdAt)}</strong></span>
+          <span className="record-meta-item">Last updated: <strong>{fmtDt(prospect.updatedAt)}</strong></span>
+          {prospect.createdByUsername && <span className="record-meta-item">Created by: <strong>{prospect.createdByUsername}</strong></span>}
         </div>
 
         <form onSubmit={handleSave} className="detail-modal-form">
@@ -195,10 +207,14 @@ export const ProspectDetailModal = ({
                 <label>Next Action Date</label>
                 <input type="date" name="nextActionDate" value={form.nextActionDate || ''} onChange={handleChange} disabled={loading} />
               </div>
-              <div className="form-group" style={{ justifyContent: 'flex-end', paddingTop: '28px', fontSize: '13px', color: '#777' }}>
-                Created by <strong style={{ marginLeft: 4 }}>{prospect.createdByUsername || '—'}</strong>
-              </div>
+              <div className="form-group" />
             </div>
+          </div>
+
+          {/* ── Activity History ── */}
+          <div className="form-section">
+            <h3>Activity History</h3>
+            <ActivityTimeline entityType="Prospect" entityId={prospect?.id} userId={userId} />
           </div>
 
           {error && <div className="error-message">{error}</div>}

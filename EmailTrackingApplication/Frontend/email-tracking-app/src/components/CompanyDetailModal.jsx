@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './CompanyDetailModal.css';
 import { companiesAPI } from '../services/api';
 import { authUtils } from '../services/authUtils';
+import { ActivityTimeline } from './ActivityTimeline';
 
 export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirector, onCompanyUpdated, onShowToast, recordType= 'Client' }) => {
   const [formData, setFormData] = useState({});
@@ -132,12 +133,23 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
 
   if (!isOpen || !company) return null;
 
+  const fmtDt = (d) => {
+    if (!d) return '—';
+    return new Date(d).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+  };
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="detail-modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="detail-modal-header">
           <h2>{recordType} Details</h2>
           <button className="close-button" onClick={onClose}>×</button>
+        </div>
+
+        <div className="record-meta">
+          <span className="record-meta-item">Added: <strong>{fmtDt(company.createdAt)}</strong></span>
+          <span className="record-meta-item">Last updated: <strong>{fmtDt(company.updatedAt)}</strong></span>
+          {company.username && <span className="record-meta-item">Prospector: <strong>{company.username}</strong></span>}
         </div>
 
         <form onSubmit={handleSave} className="detail-modal-form">
@@ -322,6 +334,12 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
                 />
               </div>
             </div>
+          </div>
+
+          {/* ── Activity History ── */}
+          <div className="form-section">
+            <h3>Activity History</h3>
+            <ActivityTimeline entityType="Company" entityId={company?.id} userId={userId} />
           </div>
 
           {error && <div className="error-message">{error}</div>}

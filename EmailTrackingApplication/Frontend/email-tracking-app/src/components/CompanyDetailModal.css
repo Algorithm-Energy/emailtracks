@@ -356,3 +356,24 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
+
+/* ── Record metadata bar (Added / Last Updated) ── */
+.record-meta {
+  display: flex;
+  gap: 24px;
+  padding: 7px 28px;
+  background: #f5f3ff;
+  border-bottom: 1px solid #e4deff;
+  font-size: 12px;
+  color: #6b5fa0;
+}
+
+.record-meta-item {
+  display: flex;
+  gap: 5px;
+}
+
+.record-meta-item strong {
+  color: #3b2f6b;
+  font-weight: 600;
+}

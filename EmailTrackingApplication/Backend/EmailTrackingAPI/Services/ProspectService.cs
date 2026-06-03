@@ -8,17 +8,19 @@ namespace EmailTrackingAPI.Services
     {
         Task<List<Prospect>> GetProspects();
         Task<Prospect?> AddProspect(AddProspectRequest request, int createdByUserId);
-        Task<bool> UpdateProspect(int id, UpdateProspectRequest request);
+        Task<bool> UpdateProspect(int id, UpdateProspectRequest request, int userId);
         Task<bool> DeleteProspect(int id);
     }
 
     public class ProspectService : IProspectService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IActivityLogService _log;
 
-        public ProspectService(ApplicationDbContext context)
+        public ProspectService(ApplicationDbContext context, IActivityLogService log)
         {
             _context = context;
+            _log = log;
         }
 
         public async Task<List<Prospect>> GetProspects()
@@ -72,14 +74,17 @@ namespace EmailTrackingAPI.Services
 
             _context.Prospects.Add(prospect);
             await _context.SaveChangesAsync();
+            await _log.LogAsync("Prospect", prospect.Id, createdByUserId, "Prospect created");
 
             return prospect;
         }
 
-        public async Task<bool> UpdateProspect(int id, UpdateProspectRequest request)
+        public async Task<bool> UpdateProspect(int id, UpdateProspectRequest request, int userId)
         {
             var prospect = await _context.Prospects.FindAsync(id);
             if (prospect == null) return false;
+
+            var oldStatus = prospect.Status;
 
             // Required fields use ?? to protect against accidental null
             prospect.ProspectName  = request.ProspectName  ?? prospect.ProspectName;
@@ -100,6 +105,11 @@ namespace EmailTrackingAPI.Services
 
             _context.Prospects.Update(prospect);
             await _context.SaveChangesAsync();
+
+            var action = oldStatus != prospect.Status
+                ? $"Status changed from '{oldStatus}' to '{prospect.Status}'"
+                : "Record updated";
+            await _log.LogAsync("Prospect", id, userId, action);
 
             return true;
         }

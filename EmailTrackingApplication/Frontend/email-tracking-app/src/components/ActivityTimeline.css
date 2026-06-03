@@ -1,0 +1,55 @@
+.activity-timeline {
+  position: relative;
+  padding: 4px 0 4px 20px;
+  border-left: 2px solid #e5e7eb;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.timeline-entry {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.timeline-entry:last-child { margin-bottom: 0; }
+
+.timeline-dot {
+  position: absolute;
+  left: -25px;
+  top: 4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #667eea;
+  border: 2px solid white;
+  box-shadow: 0 0 0 2px #e5e7eb;
+}
+
+.timeline-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.timeline-action {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.timeline-meta {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.timeline-meta strong {
+  color: #6b7280;
+}
+
+.timeline-loading,
+.timeline-empty {
+  font-size: 13px;
+  color: #9ca3af;
+  padding: 8px 0;
+  font-style: italic;
+}

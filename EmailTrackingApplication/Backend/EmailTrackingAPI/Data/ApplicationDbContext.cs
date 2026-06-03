@@ -13,6 +13,7 @@ namespace EmailTrackingAPI.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Company> Companies { get; set; }
         public DbSet<Prospect> Prospects { get; set; }
+        public DbSet<ActivityLog> ActivityLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -68,6 +69,17 @@ namespace EmailTrackingAPI.Data
 
             modelBuilder.Entity<Prospect>().HasIndex(p => p.AssignedToUserId);
             modelBuilder.Entity<Prospect>().HasIndex(p => p.Status);
+
+            // ActivityLog configuration
+            modelBuilder.Entity<ActivityLog>().HasKey(a => a.Id);
+            modelBuilder.Entity<ActivityLog>().Ignore(a => a.Username);
+            modelBuilder.Entity<ActivityLog>()
+                .HasOne<User>()
+                .WithMany()
+                .HasForeignKey(a => a.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<ActivityLog>()
+                .HasIndex(a => new { a.EntityType, a.EntityId });
 
             modelBuilder.Entity<Company>()
                 .HasIndex(c => new { c.CompanyName, c.UserId })

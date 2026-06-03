@@ -18,15 +18,19 @@ namespace EmailTrackingAPI.Services
         Task<bool> UpdateStatus(int companyId, UpdateStatusRequest request, int userId, bool isDirector);
         Task<bool> MarkAsPending(int companyId, int userId, bool isDirector);
         Task<bool> FlagForReview(int companyId, int userId, bool isDirector);
+        Task<Dictionary<string, int>> GetReviewCounts();
+        Task<List<Company>> GetPendingReview();
     }
 
     public class CompanyService : ICompanyService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IActivityLogService _log;
 
-        public CompanyService(ApplicationDbContext context)
+        public CompanyService(ApplicationDbContext context, IActivityLogService log)
         {
             _context = context;
+            _log = log;
         }
 
         // ── GetCompanies: join Users to populate Username ──────────────────────
@@ -109,6 +113,7 @@ namespace EmailTrackingAPI.Services
 
             _context.Companies.Add(company);
             await _context.SaveChangesAsync();
+            await _log.LogAsync("Company", company.Id, userId, "Record created");
 
             return company;
         }
@@ -142,6 +147,7 @@ namespace EmailTrackingAPI.Services
 
             _context.Companies.Update(company);
             await _context.SaveChangesAsync();
+            await _log.LogAsync("Company", companyId, userId, "Record updated");
 
             return true;
         }
@@ -184,12 +190,14 @@ namespace EmailTrackingAPI.Services
             if (!isDirector && company.UserId != userId)
                 return false;
             company.UpdatedAt = DateTime.UtcNow;
-            company.isApproved = request.Status; // ← director approval toggle
+            company.isApproved = request.Status;
             if (request.Status == 1)
-                company.IsReadyForReview = false; // clear flag once director acts
+                company.IsReadyForReview = false;
 
             _context.Companies.Update(company);
             await _context.SaveChangesAsync();
+            var action = request.Status == 1 ? "Record approved" : "Record unapproved";
+            await _log.LogAsync("Company", companyId, userId, action);
 
             return true;
         }
@@ -227,13 +235,54 @@ namespace EmailTrackingAPI.Services
             if (company.isApproved == 1)
                 return false; // already approved, flagging makes no sense
 
-            company.IsReadyForReview = !company.IsReadyForReview; // toggle
+            var wasFlagged = company.IsReadyForReview;
+            company.IsReadyForReview = !wasFlagged;
             company.UpdatedAt = DateTime.UtcNow;
 
             _context.Companies.Update(company);
             await _context.SaveChangesAsync();
+            await _log.LogAsync("Company", companyId, userId, wasFlagged ? "Flag reverted" : "Flagged for admin review");
 
             return true;
+        }
+
+        public async Task<Dictionary<string, int>> GetReviewCounts()
+        {
+            var counts = await _context.Companies
+                .Where(c => c.IsReadyForReview && c.isApproved == 0)
+                .GroupBy(c => c.RecordType)
+                .Select(g => new { RecordType = g.Key, Count = g.Count() })
+                .ToListAsync();
+
+            return new Dictionary<string, int>
+            {
+                ["client"] = counts.FirstOrDefault(c => c.RecordType == "Client")?.Count ?? 0,
+                ["agent"]  = counts.FirstOrDefault(c => c.RecordType == "Agent")?.Count  ?? 0,
+            };
+        }
+
+        public async Task<List<Company>> GetPendingReview()
+        {
+            return await _context.Companies
+                .Where(c => c.IsReadyForReview && c.isApproved == 0)
+                .OrderBy(c => c.UpdatedAt)
+                .Join(
+                    _context.Users,
+                    c => c.UserId,
+                    u => u.Id,
+                    (c, u) => new Company
+                    {
+                        Id = c.Id, CompanyName = c.CompanyName, Region = c.Region,
+                        Link = c.Link, Emails = c.Emails, PainPoints = c.PainPoints,
+                        ExactNeeds = c.ExactNeeds, BuyingTrigger = c.BuyingTrigger,
+                        BestPitchAngle = c.BestPitchAngle, WhyStrongFit = c.WhyStrongFit,
+                        Status = c.Status, EmailSub = c.EmailSub, EmailBody = c.EmailBody,
+                        UserId = c.UserId, Username = u.Username, CreatedAt = c.CreatedAt,
+                        UpdatedAt = c.UpdatedAt, LastEmailSentAt = c.LastEmailSentAt,
+                        isApproved = c.isApproved, IsReadyForReview = c.IsReadyForReview,
+                        RecordType = c.RecordType
+                    })
+                .ToListAsync();
         }
 
         private bool ValidateEmails(string emails)

@@ -100,6 +100,27 @@ export const companiesAPI = {
     return response.json();
   },
 
+  getActivityLog: async (entityType, entityId, userId) => {
+    const response = await fetch(`${API_BASE_URL}/activitylog?entityType=${entityType}&entityId=${entityId}`, {
+      headers: { 'userId': userId },
+    });
+    return response.json();
+  },
+
+  getReviewCounts: async (userId) => {
+    const response = await fetch(`${API_BASE_URL}/companies/review-counts`, {
+      headers: { 'userId': userId },
+    });
+    return response.json();
+  },
+
+  getPendingReview: async (userId) => {
+    const response = await fetch(`${API_BASE_URL}/companies/pending-review`, {
+      headers: { 'userId': userId, 'isDirector': 'true' },
+    });
+    return response.json();
+  },
+
   flagForReview: async (companyId, userId) => {
     const response = await fetch(`${API_BASE_URL}/companies/${companyId}/flag-for-review`, {
       method: 'PUT',
@@ -120,6 +141,46 @@ export const companiesAPI = {
         'isDirector': isDirector,
       },
       body: JSON.stringify({ status }),
+    });
+    return response.json();
+  },
+};
+
+export const adminUsersAPI = {
+  getAllUsers: async (userId, isDirector) => {
+    const response = await fetch(`${API_BASE_URL}/users/all`, {
+      headers: { 'userId': userId, 'isDirector': isDirector },
+    });
+    return response.json();
+  },
+  createUser: async (userId, isDirector, data) => {
+    const response = await fetch(`${API_BASE_URL}/users`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'userId': userId, 'isDirector': isDirector },
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+  updateUser: async (userId, isDirector, id, data) => {
+    const response = await fetch(`${API_BASE_URL}/users/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'userId': userId, 'isDirector': isDirector },
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+  toggleActive: async (userId, isDirector, id) => {
+    const response = await fetch(`${API_BASE_URL}/users/${id}/toggle-active`, {
+      method: 'PUT',
+      headers: { 'userId': userId, 'isDirector': isDirector },
+    });
+    return response.json();
+  },
+  resetPassword: async (userId, isDirector, id, newPassword) => {
+    const response = await fetch(`${API_BASE_URL}/users/${id}/reset-password`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'userId': userId, 'isDirector': isDirector },
+      body: JSON.stringify({ newPassword }),
     });
     return response.json();
   },

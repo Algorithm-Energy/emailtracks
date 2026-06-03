@@ -99,6 +99,27 @@ namespace EmailTrackingAPI.Models
         public string? Message { get; set; }
     }
 
+    // ── Activity Log ───────────────────────────────────────────────────────────
+
+    public class ActivityLog
+    {
+        public int Id { get; set; }
+        public string? EntityType { get; set; }   // "Company" | "Prospect"
+        public int EntityId { get; set; }
+        public int UserId { get; set; }
+        public string? Username { get; set; }     // not mapped, populated in service
+        public string? Action { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+
+    public class ActivityLogEntry
+    {
+        public int Id { get; set; }
+        public string? Username { get; set; }
+        public string? Action { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+
     // ── Prospects ──────────────────────────────────────────────────────────────
 
     public class Prospect
@@ -157,5 +178,35 @@ namespace EmailTrackingAPI.Models
     {
         public int Id { get; set; }
         public string? Username { get; set; }
+    }
+
+    public class UserManagementDto
+    {
+        public int Id { get; set; }
+        public string? Username { get; set; }
+        public string? Email { get; set; }
+        public bool IsDirector { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+
+    public class CreateUserRequest
+    {
+        public string? Username { get; set; }
+        public string? Email { get; set; }
+        public string? Password { get; set; }
+        public bool IsDirector { get; set; }
+    }
+
+    public class UpdateUserRequest
+    {
+        public string? Username { get; set; }
+        public string? Email { get; set; }
+        public bool IsDirector { get; set; }
+    }
+
+    public class ResetPasswordRequest
+    {
+        public string? NewPassword { get; set; }
     }
 }
