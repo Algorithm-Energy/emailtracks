@@ -23,7 +23,44 @@ npm run preview     # preview production build locally
 ```
 
 ### Database
-Schema lives in `Backend/Database/schema.sql`. To reset the `Companies` table without touching `Users`, use `Backend/Database/fix_schema.sql`. There are no EF migrations — schema changes are applied manually via SQL scripts run directly against the SQL Server instance.
+There are no EF migrations — schema changes are applied manually via SQL scripts against the SQL Server instance (`192.168.18.218`, database `AlgoAPM`).
+Pending scripts for the `feature/enhancements` branch: `Backend/Database/pending-migrations.sql` — run this once before deploying that branch.
+
+### Dev startup
+```
+start-dev.bat        # starts both servers; Vite proxy is active (dev only)
+```
+
+---
+
+## Deployment (IIS on Windows Server)
+
+### Build artifacts
+```
+build-release.bat    # from repo root — builds frontend + publishes backend in one step
+```
+
+This script:
+1. Runs `npm ci` + `npm run build --config vite.config.prod.js` (no dev proxy)
+2. Copies `dist/` → `Backend/EmailTrackingAPI/wwwroot/`
+3. Runs `dotnet publish -c Release` → `Backend/EmailTrackingAPI/bin/Release/net8.0/publish/`
+
+Deploy the entire `publish/` folder to the server.
+
+### IIS setup
+| Setting | Value |
+|---|---|
+| Application path | `/EmailTrackingApp/` — **must match** Vite `base:` and `API_BASE_URL` in `api.js` |
+| Physical path | Point to `publish/` folder |
+| App Pool | No Managed Code, 64-bit |
+| Server prerequisite | [ASP.NET Core Hosting Bundle](https://dotnet.microsoft.com/download) installed |
+| HTTPS | `UseHttpsRedirection` is active — configure an HTTPS binding in IIS, or remove that line from `Program.cs` if the site is HTTP-only |
+
+### Before first deploy (or after schema changes)
+Run `Backend/Database/pending-migrations.sql` against `AlgoAPM`, then start the app pool.
+
+### Dev proxy note
+`vite.config.js` contains a `server:` proxy block (DEV ONLY). `build-release.bat` uses `vite.config.prod.js` which omits it — never need to manually edit config before building.
 
 ---
 
