@@ -15,6 +15,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Register Services
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<ICompanyService, CompanyService>();
+builder.Services.AddScoped<IProspectService, ProspectService>();
 
 // Add CORS
 builder.Services.AddCors(options =>

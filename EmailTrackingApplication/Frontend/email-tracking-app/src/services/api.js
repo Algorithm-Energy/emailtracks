@@ -100,6 +100,17 @@ export const companiesAPI = {
     return response.json();
   },
 
+  flagForReview: async (companyId, userId) => {
+    const response = await fetch(`${API_BASE_URL}/companies/${companyId}/flag-for-review`, {
+      method: 'PUT',
+      headers: {
+        'userId': userId,
+        'isDirector': 'false',
+      },
+    });
+    return response.json();
+  },
+
   approveCompany: async (companyId, userId, isDirector, status) => {
     const response = await fetch(`${API_BASE_URL}/companies/${companyId}/status`, {
       method: 'PUT',
@@ -109,6 +120,48 @@ export const companiesAPI = {
         'isDirector': isDirector,
       },
       body: JSON.stringify({ status }),
+    });
+    return response.json();
+  },
+};
+
+export const prospectsAPI = {
+  getProspects: async (userId) => {
+    const response = await fetch(`${API_BASE_URL}/prospects`, {
+      headers: { 'userId': userId },
+    });
+    return response.json();
+  },
+
+  addProspect: async (userId, data) => {
+    const response = await fetch(`${API_BASE_URL}/prospects`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'userId': userId },
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+
+  updateProspect: async (prospectId, userId, data) => {
+    const response = await fetch(`${API_BASE_URL}/prospects/${prospectId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'userId': userId },
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+
+  deleteProspect: async (prospectId, userId, isDirector) => {
+    const response = await fetch(`${API_BASE_URL}/prospects/${prospectId}`, {
+      method: 'DELETE',
+      headers: { 'userId': userId, 'isDirector': isDirector },
+    });
+    return response.json();
+  },
+
+  getUsers: async (userId) => {
+    const response = await fetch(`${API_BASE_URL}/users`, {
+      headers: { 'userId': userId },
     });
     return response.json();
   },

@@ -1,0 +1,48 @@
+/* Pipeline status badges */
+.ps-first-meeting    { background-color: #e3f2fd; color: #1565c0; }
+.ps-demo             { background-color: #ede7f6; color: #4527a0; }
+.ps-followup         { background-color: #fff3e0; color: #e65100; }
+.ps-proposal         { background-color: #e0f2f1; color: #00695c; }
+.ps-contract-sent    { background-color: #e8eaf6; color: #283593; }
+.ps-contract-signed  { background-color: #e8f5e9; color: #1b5e20; }
+.ps-lost             { background-color: #ffebee; color: #b71c1c; }
+
+/* Source badge */
+.source-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  background-color: #f3f4f6;
+  color: #4b5563;
+  letter-spacing: 0.3px;
+}
+
+/* Overdue next-action date */
+.overdue-date {
+  color: #dc2626 !important;
+  font-weight: 600;
+}
+
+/* Prospect type badge (inline under name) */
+.prospect-type-badge {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+.pt-direct { background-color: #e0e7ff; color: #3730a3; }
+.pt-agent  { background-color: #ccfbf1; color: #065f46; }
+
+/* Referred by text under source */
+.referred-by-text {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #6b7280;
+  font-style: italic;
+}

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './DashboardPage.css';
 import { CompanyTable } from '../components/CompanyTable';
 import { AddCompanyModal } from '../components/AddCompanyModal';
+import { ProspectsSection } from '../components/ProspectsSection';
 import { Toast, useToast } from '../components/Toast';
 import { companiesAPI } from '../services/api';
 import { authUtils } from '../services/authUtils';
@@ -101,7 +102,7 @@ export const DashboardPage = ({ user, onLogout }) => {
             <h1>Dashboard</h1>
             <p className="welcome-message">
               Welcome, <strong>{user?.username}</strong>
-              {user?.isDirector && <span className="director-badge">Director</span>}
+              {user?.isDirector && <span className="director-badge">Admin</span>}
             </p>
           </div>
           <button className="logout-button" onClick={handleLogout}>
@@ -120,29 +121,37 @@ export const DashboardPage = ({ user, onLogout }) => {
               <button className={`tab ${selectedTab === 'Agent' ? 'active' : ''}`} onClick={() => { setSelectedTab('Agent'); setSearchQuery(''); }}>
                 Agent
               </button>
+              <button className={`tab ${selectedTab === 'Prospects' ? 'active' : ''}`} onClick={() => { setSelectedTab('Prospects'); setSearchQuery(''); }}>
+                Prospects
+              </button>
             </div>
-            <div className="search-box">
-              <input
-                type="text"
-                className="search-input"
-                placeholder={`Search ${selectedTab}s...`}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <span className="company-count">
-              Showing {filteredCompanies.length} of {companies.length} record(s)
-            </span>
+            {selectedTab !== 'Prospects' && (
+              <>
+                <div className="search-box">
+                  <input
+                    type="text"
+                    className="search-input"
+                    placeholder={`Search ${selectedTab}s...`}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                <span className="company-count">
+                  Showing {filteredCompanies.length} of {companies.length} record(s)
+                </span>
+              </>
+            )}
           </div>
-          <button
-            className="add-company-button"
-            onClick={modalControl}
-          >
-            + Add {selectedTab}
-          </button>
+          {selectedTab !== 'Prospects' && (
+            <button className="add-company-button" onClick={modalControl}>
+              + Add {selectedTab}
+            </button>
+          )}
         </div>
 
-        {loading ? (
+        {selectedTab === 'Prospects' ? (
+          <ProspectsSection user={user} onShowToast={showToast} />
+        ) : loading ? (
           <div className="loading-state">
             <div className="spinner"></div>
             <p>Loading {selectedTab.toLowerCase()}s...</p>

@@ -12,6 +12,7 @@ namespace EmailTrackingAPI.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Company> Companies { get; set; }
+        public DbSet<Prospect> Prospects { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -46,6 +47,27 @@ namespace EmailTrackingAPI.Data
             // Index for performance
             modelBuilder.Entity<Company>()
                 .HasIndex(c => c.UserId);
+
+            // Prospect configuration
+            modelBuilder.Entity<Prospect>().HasKey(p => p.Id);
+            modelBuilder.Entity<Prospect>().Ignore(p => p.AssignedToUsername);
+            modelBuilder.Entity<Prospect>().Ignore(p => p.CreatedByUsername);
+
+            modelBuilder.Entity<Prospect>()
+                .HasOne<User>()
+                .WithMany()
+                .HasForeignKey(p => p.CreatedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Prospect>()
+                .HasOne<User>()
+                .WithMany()
+                .HasForeignKey(p => p.AssignedToUserId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Prospect>().HasIndex(p => p.AssignedToUserId);
+            modelBuilder.Entity<Prospect>().HasIndex(p => p.Status);
 
             modelBuilder.Entity<Company>()
                 .HasIndex(c => new { c.CompanyName, c.UserId })
