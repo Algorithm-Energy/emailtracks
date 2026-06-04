@@ -71,7 +71,8 @@ namespace EmailTrackingAPI.Services
             LastEmailSentAt = c.LastEmailSentAt,
             isApproved = c.isApproved,
             IsReadyForReview = c.IsReadyForReview,
-            RecordType = c.RecordType
+            RecordType = c.RecordType,
+            OfficialRemarks = c.OfficialRemarks
         })
     .ToListAsync();
 
@@ -122,7 +123,7 @@ namespace EmailTrackingAPI.Services
         public async Task<bool> UpdateCompany(int companyId, UpdateCompanyRequest request, int userId, bool isDirector)
         {
             var company = await _context.Companies.FindAsync(companyId);
-
+            Console.WriteLine("=================================MID=====================================");
             if (company == null)
                 return false;
 
@@ -131,7 +132,7 @@ namespace EmailTrackingAPI.Services
 
             if (!string.IsNullOrWhiteSpace(request.Emails) && !ValidateEmails(request.Emails))
                 return false;
-
+            Console.WriteLine("=================================MID2=====================================");
             company.CompanyName    = request.CompanyName    ?? company.CompanyName;
             company.Region         = request.Region         ?? company.Region;
             company.Link           = request.Link           ?? company.Link;
@@ -145,6 +146,7 @@ namespace EmailTrackingAPI.Services
             company.EmailSub       = request.EmailSub       ?? company.EmailSub;
             company.EmailBody      = request.EmailBody      ?? company.EmailBody;
             company.UpdatedAt      = DateTime.UtcNow;
+            company.OfficialRemarks = request.OfficialRemarks ?? company.OfficialRemarks;
 
             _context.Companies.Update(company);
             await _context.SaveChangesAsync();
@@ -302,7 +304,7 @@ namespace EmailTrackingAPI.Services
                         UserId = c.UserId, Username = u.Username, CreatedAt = c.CreatedAt,
                         UpdatedAt = c.UpdatedAt, LastEmailSentAt = c.LastEmailSentAt,
                         isApproved = c.isApproved, IsReadyForReview = c.IsReadyForReview,
-                        RecordType = c.RecordType
+                        RecordType = c.RecordType, OfficialRemarks = c.OfficialRemarks
                     })
                 .ToListAsync();
         }

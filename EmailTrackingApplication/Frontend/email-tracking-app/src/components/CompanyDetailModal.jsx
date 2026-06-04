@@ -53,6 +53,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
           whyStrongFit:   formData.whyStrongFit,
           emailSub:       formData.emailSub,
           emailBody:      formData.emailBody,
+          officialRemarks: formData.officialRemarks,
         }
       );
 
@@ -354,6 +355,22 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
               </div>
             </div>
           </div>
+          
+
+          {/* ── Official Remarks ── */}
+          <div className="form-row">
+              <div className="form-group full-width">
+                <label htmlFor="officialRemarks">Official Remarks</label>
+                <textarea
+                  id="officialRemarks" name="officialRemarks"
+                  value={formData.officialRemarks || ''}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                  placeholder="Your official remarks for this user"
+                  rows="3"
+                />
+              </div>
+            </div>
 
           {/* ── Activity History ── */}
           <div className="form-section">

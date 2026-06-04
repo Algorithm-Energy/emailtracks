@@ -48,6 +48,7 @@ namespace EmailTrackingAPI.Models
         public int isApproved   { get; set; } //
         public bool IsReadyForReview { get; set; } // set by employee when ready for director review
         public string RecordType   { get; set; } //
+        public string? OfficialRemarks   { get; set; } //
     }   
 
     public class AddCompanyRequest
@@ -73,6 +74,7 @@ namespace EmailTrackingAPI.Models
         public string? Status { get; set; }
         public string? EmailSub { get; set; }
         public string? EmailBody { get; set; }
+        public string? OfficialRemarks { get; set; }
     }
 
     public class UpdateStatusRequest
