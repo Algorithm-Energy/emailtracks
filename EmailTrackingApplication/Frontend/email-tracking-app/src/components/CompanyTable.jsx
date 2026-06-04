@@ -130,12 +130,14 @@ export const CompanyTable = ({
                     return (
                       <tr
                         key={company.id}
-                        className={Number(company.userId) === Number(userId) || isDirector ? 'clickable-row' : 'non-clickable-row'}
-                        onClick={
-                          Number(company.userId) === Number(userId) || isDirector
-                            ? () => handleRowClick(company)
-                            : undefined
-                        }
+                        // className={Number(company.userId) === Number(userId) || isDirector ? 'clickable-row' : 'non-clickable-row'}
+                        // onClick={
+                        //   Number(company.userId) === Number(userId) || isDirector
+                        //     ? () => handleRowClick(company)
+                        //     : undefined
+                        // }
+                        className='clickable-row'
+                        onClick={() => handleRowClick(company)}
                       >
                         <td className="company-name-cell">
                           {company.link ? (

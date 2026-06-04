@@ -18,6 +18,7 @@ namespace EmailTrackingAPI.Services
         Task<bool> UpdateStatus(int companyId, UpdateStatusRequest request, int userId, bool isDirector);
         Task<bool> MarkAsPending(int companyId, int userId, bool isDirector);
         Task<bool> FlagForReview(int companyId, int userId, bool isDirector);
+        Task<bool> RevertFlagForReview(int companyId, int userId, bool isDirector);
         Task<Dictionary<string, int>> GetReviewCounts();
         Task<List<Company>> GetPendingReview();
     }
@@ -243,6 +244,27 @@ namespace EmailTrackingAPI.Services
             await _context.SaveChangesAsync();
             await _log.LogAsync("Company", companyId, userId, wasFlagged ? "Flag reverted" : "Flagged for admin review");
 
+            return true;
+        }
+
+
+        public async Task<bool> RevertFlagForReview(int companyId, int userId, bool isDirector)
+        {
+            var company = await _context.Companies.FindAsync(companyId);
+
+            if (company == null)
+                return false;
+            if (!isDirector)
+                return false;
+            if (company.isApproved == 1)
+                return false; // already approved, flagging makes no sense
+            var wasFlagged = company.IsReadyForReview;
+            company.IsReadyForReview = !wasFlagged;
+            company.UpdatedAt = DateTime.UtcNow;
+            
+            _context.Companies.Update(company);
+            await _context.SaveChangesAsync();
+            await _log.LogAsync("Company", companyId, userId, wasFlagged ? "Flag reverted" : "Flagged for admin review");
             return true;
         }
 

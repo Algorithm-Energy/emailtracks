@@ -268,6 +268,30 @@ namespace EmailTrackingAPI.Controllers
             }
         }
 
+
+        [HttpPut("{id}/flag-for-review-reverted")]
+        public async Task<ActionResult<ApiResponse<string>>> RevertFlagForReview(int id)
+        {
+            if (!Request.Headers.TryGetValue("userId", out var userIdHeader) ||
+                !int.TryParse(userIdHeader.FirstOrDefault(), out int userId) || userId == 0)
+                return Unauthorized(new ApiResponse<string> { Success = false, Message = "User not authenticated" });
+
+            bool.TryParse(Request.Headers["isDirector"].FirstOrDefault(), out bool isDirector);
+            
+            try
+            {
+                var success = await _companyService.RevertFlagForReview(id, userId, isDirector);
+                if (!success)
+                    return BadRequest(new ApiResponse<string> { Success = false, Message = "Failed to flag for review" });
+
+                return Ok(new ApiResponse<string> { Success = true, Message = "Flagged for director review successfully" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponse<string> { Success = false, Message = ex.Message });
+            }
+        }
+
         [HttpPut("{id}/mark-as-pending")]
         public async Task<ActionResult<ApiResponse<string>>> MarkAsPending(int id)
         {

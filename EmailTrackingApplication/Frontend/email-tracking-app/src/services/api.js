@@ -132,6 +132,17 @@ export const companiesAPI = {
     return response.json();
   },
 
+  flagForRevertedReview: async (companyId, userId, isDirector) => {
+    const response = await fetch(`${API_BASE_URL}/companies/${companyId}/flag-for-review-reverted`, {
+      method: 'PUT',
+      headers: {
+        'userId': userId,
+        'isDirector': isDirector,
+      },
+    });
+    return response.json();
+  },
+
   approveCompany: async (companyId, userId, isDirector, status) => {
     const response = await fetch(`${API_BASE_URL}/companies/${companyId}/status`, {
       method: 'PUT',

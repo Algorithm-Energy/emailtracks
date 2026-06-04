@@ -131,6 +131,25 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
     }
   };
 
+  const handleFlagForReviewreverted = async () => {
+    setLoading(true);
+    try {
+      const response = await companiesAPI.flagForRevertedReview(company.id, userId, isDirector);
+      if (response.success) {
+        onCompanyUpdated();
+        const action = formData.isReadyForReview ? 'flag reverted.' : 'flagged for admin review.';
+        onShowToast(`${recordType} ${action}`, 'success');
+        onClose();
+      } else {
+        setError(response.message || `Error flagging ${recordType.toLowerCase()} for review.`);
+      }
+    } catch (err) {
+      setError(`Error flagging ${recordType.toLowerCase()} for review. Please try again.`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!isOpen || !company) return null;
 
   const fmtDt = (d) => {
@@ -165,7 +184,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
                   type="text" id="companyName" name="companyName"
                   value={formData.companyName || ''}
                   onChange={handleInputChange}
-                  disabled={!canEdit || loading}
+                  disabled={loading}
                   placeholder={`Enter ${recordType} name`}
                 />
               </div>
@@ -175,7 +194,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
                   type="text" id="region" name="region"
                   value={formData.region || ''}
                   onChange={handleInputChange}
-                  disabled={!canEdit || loading}
+                  disabled={loading}
                   placeholder="Enter region"
                 />
               </div>
@@ -188,7 +207,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
                   type="text" id="link" name="link"
                   value={formData.link || ''}
                   onChange={handleInputChange}
-                  disabled={!canEdit || loading}
+                  disabled={loading}
                   placeholder="https://example.com"
                 />
               </div>
@@ -201,7 +220,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
                   id="emails" name="emails"
                   value={formData.emails || ''}
                   onChange={handleInputChange}
-                  disabled={!canEdit || loading}
+                  disabled={loading}
                   placeholder="Enter emails separated by commas or semicolons"
                   rows="3"
                 />
@@ -215,7 +234,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
                   id="status" name="status"
                   value={formData.status || 'Pending'}  
                   onChange={handleInputChange}
-                  disabled={!canEdit || loading || formData.isApproved === 1 ? false : true}
+                  disabled={loading || formData.isApproved === 1 ? false : true}
                   className="status-select"
                 >
                   <option value="Pending">Pending</option>
@@ -240,7 +259,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
                   id="painPoints" name="painPoints"
                   value={formData.painPoints || ''}
                   onChange={handleInputChange}
-                  disabled={!canEdit || loading}
+                  disabled={loading}
                   placeholder="Describe the client's pain points"
                   rows="3"
                 />
@@ -254,7 +273,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
                   id="exactNeeds" name="exactNeeds"
                   value={formData.exactNeeds || ''}
                   onChange={handleInputChange}
-                  disabled={!canEdit || loading}
+                  disabled={loading}
                   placeholder="Describe their exact needs"
                   rows="3"
                 />
@@ -268,7 +287,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
                   id="buyingTrigger" name="buyingTrigger"
                   value={formData.buyingTrigger || ''}
                   onChange={handleInputChange}
-                  disabled={!canEdit || loading}
+                  disabled={loading}
                   placeholder="What triggers their buying decision"
                   rows="3"
                 />
@@ -282,7 +301,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
                   id="bestPitchAngle" name="bestPitchAngle"
                   value={formData.bestPitchAngle || ''}
                   onChange={handleInputChange}
-                  disabled={!canEdit || loading}
+                  disabled={loading}
                   placeholder="Your best pitch angle for this client"
                   rows="3"
                 />
@@ -296,7 +315,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
                   id="whyStrongFit" name="whyStrongFit"
                   value={formData.whyStrongFit || ''}
                   onChange={handleInputChange}
-                  disabled={!canEdit || loading}
+                  disabled={loading}
                   placeholder="Why your solution is a strong fit"
                   rows="3"
                 />
@@ -315,7 +334,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
                   type="text" id="emailSub" name="emailSub"
                   value={formData.emailSub || ''}
                   onChange={handleInputChange}
-                  disabled={!canEdit || loading}
+                  disabled={loading}
                   placeholder="Enter email subject"
                 />
               </div>
@@ -328,7 +347,7 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
                   id="emailBody" name="emailBody"
                   value={formData.emailBody || ''}
                   onChange={handleInputChange}
-                  disabled={!canEdit || loading}
+                  disabled={loading}
                   placeholder="Write your email body here..."
                   rows="6"
                 />
@@ -352,9 +371,31 @@ export const CompanyDetailModal = ({ isOpen, onClose, company, userId, isDirecto
             {canEdit && (
               <>
                 {isDirector && (
-                  <button type="button" className="button button-success" onClick={handleApproved} disabled={loading}>
-                    {formData.isApproved === 1 ? 'Unapprove' : 'Approve'}
-                  </button>
+                    <>
+                      {company.isReadyForReview && company.isApproved !== 1 && (
+                        <button
+                          type="button"
+                          className="button button-flag-revert"
+                          onClick={handleFlagForReviewreverted}
+                          disabled={loading}
+                        >
+                          ↩ Revert Flag
+                        </button>
+                      )}
+                      {
+
+                      company.isReadyForReview &&(
+                      <button
+                        type="button"
+                        className="button button-success"
+                        onClick={handleApproved}
+                        disabled={loading}
+                      >
+                        {formData.isApproved === 1 ? 'Unapprove' : 'Approve'}
+                      </button>
+)
+                      }
+                    </>
                 )}
                 {!isDirector && formData.isApproved !== 1 && (
                   formData.isReadyForReview
